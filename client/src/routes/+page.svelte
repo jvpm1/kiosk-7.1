@@ -1,5 +1,6 @@
 <script>
   import { invoke } from "@tauri-apps/api/core";
+  import "../app.css";
 
   let name = $state("");
   let greetMsg = $state("");
