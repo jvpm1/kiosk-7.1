@@ -1,5 +1,12 @@
 <?php
 require_once '../dbc.php';
+
+// TODO: Remove upon release //
+header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
+header('Access-Control-Allow-Credentials: true');
+header('Access-Control-Max-Age: 86400');
+// END //
+
 header('Content-Type: application/json');
 
 $output = [];
@@ -26,6 +33,7 @@ ORDER BY
     p.product_id
 ";
 
+// Main
 $prepare = $con->prepare($query);
 $prepare->bind_result(
     $product_id,
@@ -62,4 +70,5 @@ while ($prepare->fetch()) {
 
 $con->close();
 
+// Return json
 echo json_encode($output);
