@@ -1,6 +1,6 @@
 <script lang="ts">
   // Images
-  import dino from "../../lib/img/logo-picture.webp";
+  import dino from "$lib/img/logo-picture.webp";
   import arrowLeft from "$lib/img/bootstrap/arrow-left.svg";
   import globe from "$lib/img/bootstrap/globe.svg";
   import cart from "$lib/img/bootstrap/cart.svg";
@@ -84,20 +84,22 @@
 
   // Core values
   let currentDisplay: number = 2; // 1 = items, 2 = cart
-  let totalPrice = 0;
+  let totalPrice: number = 0;
+  let totalInCart: number = 0;
 
   // Functions
-  function updateTotalPrice() {
+  function updateCartValues() {
     let num = 0;
     cartItems.forEach((productsData: Product) => {
-      num += productsData.price;
+      num += Number(productsData.price);
     });
-    totalPrice = num;
+    totalPrice = Math.floor(num * 100) / 100;
+    totalInCart = cartItems.length;
   }
 
   function addCartItem(productData: Product) {
     cartItems.push(productData);
-    updateTotalPrice();
+    updateCartValues();
   }
 
   function getImagePath(filename: string): string {
@@ -151,7 +153,7 @@
 
   // Remove this
   // This is for debugging
-  updateTotalPrice();
+  updateCartValues();
 </script>
 
 <!-- Main display -->
@@ -270,7 +272,7 @@
                           {cartItem.description}
                         </div>
                       </div>
-                      <p class="text-4xl">€ {cartItem.price}0</p>
+                      <p class="text-4xl">€ {cartItem.price}</p>
                     </div>
 
                     <div class="flex items-center gap-5">
@@ -289,12 +291,16 @@
                 </div>
               {/each}
 
+              <div class="w-full h-0.5 bg-black/20"></div>
+
               <div
                 class="flex flex-row justify-between text-black/80 text-4xl font-bold"
               >
                 <span>Total:</span>
                 <span>€ {totalPrice}</span>
               </div>
+
+              <div class="w-full h-0.5 bg-black/20"></div>
             </div>
           </div>
         </div>
@@ -359,9 +365,9 @@
         <div class="flex items-center text-black/70 font-bold text-xl gap-4">
           <div class="flex flex-row gap-2 items-center">
             <img src={cart} class="opacity-70 h-5 mt-0.5" alt="" />
-            <span>2 items</span>
+            <span>{totalInCart} items</span>
           </div>
-          <span class="ml-2">€ 4.50</span>
+          <span class="ml-2">€ {totalPrice}</span>
         </div>
       {/if}
     </div>
