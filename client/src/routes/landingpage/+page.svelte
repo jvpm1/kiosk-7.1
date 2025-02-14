@@ -158,7 +158,9 @@
 <!-- Main display -->
 <div
   id="mainDisplay"
-  class="w-full h-screen flex flex-col absolute bg-[var(--background)] {showPopup ? 'blurred' : ''}"
+  class="w-full h-screen flex flex-col absolute bg-[var(--background)] {showPopup
+    ? 'blurred'
+    : ''}"
 >
   <!-- Items -->
   {#if currentDisplay == 1}
@@ -233,7 +235,12 @@
                   ${productData.price}
                 </p>
                 <div class="ml-32">
-                  <div onclick={() => openPopup(productData)} class="cursor-pointer">
+                  <!-- svelte-ignore a11y_click_events_have_key_events -->
+                  <!-- svelte-ignore a11y_no_static_element_interactions -->
+                  <div
+                    onclick={() => openPopup(productData)}
+                    class="cursor-pointer"
+                  >
                     <Icon icon="carbon:information" width="24" height="24" />
                   </div>
                 </div>
@@ -383,13 +390,28 @@
 
 <!-- Popup -->
 {#if showPopup && selectedProduct}
-  <div class="fixed inset-0 flex items-center justify-center bg-opacity-80 z-50">
+  <div
+    class="fixed inset-0 flex items-center justify-center bg-opacity-80 z-50"
+  >
     <div class="bg-white p-8 rounded-lg shadow-lg w-1/2">
       <h2 class="text-2xl font-bold mb-4">{selectedProduct.name}</h2>
       <p class="mb-4">{selectedProduct.description}</p>
       <p class="mb-4">Price: ${selectedProduct.price}</p>
-      <img src={selectedProduct.image.filename} alt={selectedProduct.name} class="w-full h-48 object-cover rounded-lg mb-4" />
-      <button onclick={closePopup} class="bg-green-400/80 text-white px-4 py-2 rounded-lg">Close</button>
+      <img
+        src={selectedProduct.image.filename}
+        alt={selectedProduct.name}
+        class="w-full h-48 object-cover rounded-lg mb-4"
+      />
+      <button
+        onclick={closePopup}
+        class="bg-green-400/80 text-white px-4 py-2 rounded-lg">Close</button
+      >
     </div>
   </div>
 {/if}
+
+<style>
+  .blurred {
+    filter: blur(5px);
+  }
+</style>
