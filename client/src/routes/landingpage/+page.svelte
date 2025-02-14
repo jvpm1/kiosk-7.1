@@ -53,11 +53,31 @@
         },
         image: {
           filename:
-            "DALLE_2025-01-22_15.59.38_-_A_sleek_and_modern_logo_design_for_a_brand_emphasizing_speed_health_and_convenience._The_logo_features_vibrant_green_and_orange_color_palette_to_sym.jpg",
+            "/src/lib/img/menu/DALLE_2025-01-22_15.59.38_-_A_sleek_and_modern_logo_design_for_a_brand_emphasizing_speed_health_and_convenience._The_logo_features_vibrant_green_and_orange_color_palette_to_sym.jpg",
           description: "Morning Boost Smoothie Bowl Logo",
         },
       },
-      amount: 2,
+      amount: 3,
+    },
+
+    {
+      productData: {
+        id: 6,
+        name: "Zesty Chickpea Wrap",
+        description:
+          "Whole-grain wrap with spiced chickpeas, shredded carrots, lettuce, and hummus",
+        price: 4.5,
+        category: {
+          name: "Lunch & Dinner",
+          description: "Healthy and satisfying meals for any time of day",
+        },
+        image: {
+          filename:
+            "/src/lib/img/menu/DALLE_2025-01-22_16.00.00_-_A_photorealistic_depiction_of_a_wrap_called_Zesty_Chickpea_Wrap._The_wrap_is_made_with_a_whole-grain_tortilla_filled_with_spiced_chickpeas_shredde.jpg",
+          description: "Zesty Chickpea Wrap",
+        },
+      },
+      amount: 5,
     },
   ];
   let productsData: Product[] = [];
@@ -70,6 +90,23 @@
   let currentDisplay: number = 2; // 1 = items, 2 = cart
 
   // Functions
+  function addCartItem(productData: Product) {
+    let alreadyExists = cartItems.find(
+      (cartItem) => cartItem.productData.name == productData.name
+    ) as Item;
+
+    if (!alreadyExists) {
+      cartItems.push({
+        productData: productData,
+        amount: 1,
+      });
+
+      return;
+    }
+
+    alreadyExists.amount += 1;
+  }
+
   function getImagePath(filename: string): string {
     const imagePath = `../../lib/img/menu/${filename}`;
     return (images[imagePath] as ImageModule)?.default || "";
@@ -97,12 +134,6 @@
     ];
     selectedCategory = categories[0]; // Set the initial selected category
   });
-
-  function addCartItem(productData: Product) {
-    let alreadyExists: any = cartItems.find(
-      (cartItem) => cartItem.productData.name == productData.name
-    );
-  }
 
   function selectCategory(category: string) {
     selectedCategory = category;
@@ -168,26 +199,61 @@
     <div
       class="flex flex-col items-center justify-between w-full h-full gap-2 p-4"
     >
-      <div id="itemsContainer" class="w-4/5 h-full">
-        <img src={dino} class="h-50 mx-auto" alt="" />
-        <h2 class="text-8xl font-bold">Your items</h2>
+      <div id="itemsContainer" class="w-4/5 h-full flex-col flex">
+        <div class="w-full h-full flex flex-col">
+          <img src={dino} class="h-50 mx-auto" alt="" />
 
-        <!-- Items -->
-        {#each cartItems as cartItem}
           <div class="space-y-5">
-            <div class="w-full h-auto p-5">
-              <img src={cartItem.productData.image.filename} alt="e" />
+            <h2 class="text-8xl font-bold text-black/80">Your cart items</h2>
+
+            <!-- Items -->
+            <div class="space-y-5">
+              {#each cartItems as cartItem}
+                <div
+                  class="w-full p-5 h-50 flex gap-5 text-3xl font-bold text-black/70 bg-[var(--secondary)] rounded-4xl"
+                >
+                  <img
+                    src={cartItem.productData.image.filename}
+                    alt=""
+                    class="h-full rounded-4xl"
+                  />
+
+                  <div class="flex flex-col gap-3 justify-between w-full">
+                    <div class="flex justify-between w-full p-5">
+                      <p>{cartItem.productData.name}</p>
+                      <p class="font-normal">€ {cartItem.productData.price}0</p>
+                    </div>
+
+                    <div class="flex items-center gap-5">
+                      <button
+                        id="purchaseButton"
+                        class="w-auto h-auto rounded-4xl bg-[var(--secondary)] p-4 text-2xl font-bold text-black/80"
+                        >+</button
+                      >
+                      <button
+                        id="purchaseButton"
+                        class="w-auto h-auto rounded-4xl bg-[var(--secondary)] p-4 text-2xl font-bold text-black/80"
+                        >-</button
+                      >
+                    </div>
+                  </div>
+                </div>
+              {/each}
             </div>
           </div>
-        {/each}
-      </div>
+        </div>
 
-      <button id="purchaseButton"></button>
+        <button
+          id="purchaseButton"
+          class="w-auto h-auto rounded-4xl bg-[var(--secondary)] p-4 text-5xl font-bold text-black/80"
+          >Checkout</button
+        >
+      </div>
     </div>
   {/if}
 
   <!-- Bottom bar -->
-  <div class="h-23 border-t bg-white flex items-center justify-between px-4">
+  <div class="h-23 bg-transparent flex items-center justify-between px-4">
     <div class="flex items-center space-x-4">
       <!-- Cancel Order -->
       <button
@@ -199,7 +265,7 @@
 
           goto("/");
         }}
-        class="flex items-center text-black/70 gap-2 rounded-lg bg-[var(--secondary)] p-3 cursor-pointer"
+        class="flex items-center text-black/70 gap-2 rounded-4xl bg-[var(--secondary)] p-4 cursor-pointer"
       >
         <img src={arrowLeft} class="opacity-70 h-5 mt-0.5" alt="" />
         <span class="font-bold text-xl">Cancel order</span>
@@ -207,7 +273,7 @@
 
       <!-- Langauge -->
       <button
-        class="flex items-center text-black/70 gap-2 rounded-lg bg-[var(--secondary)] p-3 cursor-pointer"
+        class="flex items-center text-black/70 gap-2 rounded-4xl bg-[var(--secondary)] p-4 cursor-pointer"
       >
         <img src={globe} class="opacity-70 h-5 mt-0.5" alt="" />
         <span class="font-bold text-xl">ENG</span>
@@ -221,7 +287,7 @@
           onclick={() => {
             currentDisplay = 2;
           }}
-          class="flex items-center text-black/70 gap-2 rounded-lg bg-[var(--secondary)] p-3 cursor-pointer"
+          class="flex items-center text-black/70 gap-2 rounded-3xl bg-[var(--secondary)] p-4 cursor-pointe"
         >
           <img src={basket} class="opacity-70 h-5 mt-0.5" alt="" />
           <span class="font-bold text-xl">View cart</span>
