@@ -1,7 +1,15 @@
 <script lang="ts">
-  // Imports
+  // Images
   import dino from "../../lib/img/logo-picture.webp";
+  import arrowLeft from "$lib/img/bootstrap/arrow-left.svg";
+  import globe from "$lib/img/bootstrap/globe.svg";
+  import cart from "$lib/img/bootstrap/cart.svg";
+  import basket from "$lib/img/bootstrap/basket.svg";
+
+  // Imports
   import { onMount } from "svelte";
+  import { redirect } from "@sveltejs/kit";
+  import { goto } from "$app/navigation";
 
   // Interfaces
   interface Product {
@@ -13,6 +21,7 @@
       filename: string;
       description: string;
     };
+
     category: {
       name: string;
       description: string;
@@ -29,7 +38,28 @@
   }
 
   // Values
-  let cartItems: Item[] = [];
+  let cartItems: Item[] = [
+    {
+      productData: {
+        id: 1,
+        name: "Morning Boost Smoothie Bowl",
+        description:
+          "A blend of acai, banana, and mixed berries topped with granola, chia seeds, and coconut flakes",
+        price: 4.5,
+        category: {
+          name: "Breakfast",
+          description:
+            "Start your day right with our nutritious breakfast options",
+        },
+        image: {
+          filename:
+            "DALLE_2025-01-22_15.59.38_-_A_sleek_and_modern_logo_design_for_a_brand_emphasizing_speed_health_and_convenience._The_logo_features_vibrant_green_and_orange_color_palette_to_sym.jpg",
+          description: "Morning Boost Smoothie Bowl Logo",
+        },
+      },
+      amount: 2,
+    },
+  ];
   let productsData: Product[] = [];
   let categories: string[] = [];
   let selectedCategory: string = "";
@@ -37,7 +67,7 @@
   const images = import.meta.glob("../../lib/img/menu/*.jpg", { eager: true });
 
   // Core values
-  let currentDisplay: number = 1; // 1 = items, 2 = cart
+  let currentDisplay: number = 2; // 1 = items, 2 = cart
 
   // Functions
   function getImagePath(filename: string): string {
@@ -68,7 +98,11 @@
     selectedCategory = categories[0]; // Set the initial selected category
   });
 
-  function addCartItem(productData: Product) {}
+  function addCartItem(productData: Product) {
+    let alreadyExists: any = cartItems.find(
+      (cartItem) => cartItem.productData.name == productData.name
+    );
+  }
 
   function selectCategory(category: string) {
     selectedCategory = category;
@@ -84,17 +118,14 @@
   {#if currentDisplay == 1}
     <div id="landingpagecontainer" class="flex w-full h-full">
       <!-- Sidebar -->
-      <div
-        id="sidebar"
-        class="col-span-1 bg-background p-4 h-full bg-[var(--secondary)]"
-      >
-        <h2 class="text-2xl font-bold mb-4">Categories</h2>
+      <div id="sidebar" class="bg-background p-4 h-full bg-[var(--secondary)]">
+        <!-- <h2 class="text-2xl font-bold mb-4">Categories</h2> -->
         <ul>
           {#each categories as category}
             <li class="mb-2">
               <a
                 href="#"
-                on:click={() => selectCategory(category)}
+                onclick={() => selectCategory(category)}
                 class="text-lg font-bold text-black hover:underline"
                 >{category}</a
               >
@@ -112,7 +143,7 @@
           {#each productsData.filter((productData) => productData.category.name === selectedCategory) as productData (productData.id)}
             <button
               class="bg-white p-4 rounded shadow flex flex-col gap-2"
-              on:click={() => addCartItem(productData)}
+              onclick={() => addCartItem(productData)}
             >
               <div class="h-full">
                 <img
@@ -134,28 +165,77 @@
 
   <!-- Cart -->
   {#if currentDisplay == 2}
-    <div class="flex w-full h-full"></div>
+    <div
+      class="flex flex-col items-center justify-between w-full h-full gap-2 p-4"
+    >
+      <div id="itemsContainer" class="w-4/5 h-full">
+        <img src={dino} class="h-50 mx-auto" alt="" />
+        <h2 class="text-8xl font-bold">Your items</h2>
+
+        <!-- Items -->
+        {#each cartItems as cartItem}
+          <div class="space-y-5">
+            <div class="w-full h-auto p-5">
+              <img src={cartItem.productData.image.filename} alt="e" />
+            </div>
+          </div>
+        {/each}
+      </div>
+
+      <button id="purchaseButton"></button>
+    </div>
   {/if}
 
-  <div
-    class="h-[50px] border-t bg-white flex items-center justify-between px-4"
-  >
+  <!-- Bottom bar -->
+  <div class="h-23 border-t bg-white flex items-center justify-between px-4">
     <div class="flex items-center space-x-4">
-      <button class="flex items-center text-gray-600">
-        <span>← Cancel order</span>
+      <!-- Cancel Order -->
+      <button
+        onclick={() => {
+          if (currentDisplay == 2) {
+            currentDisplay = 1;
+            return;
+          }
+
+          goto("/");
+        }}
+        class="flex items-center text-black/70 gap-2 rounded-lg bg-[var(--secondary)] p-3 cursor-pointer"
+      >
+        <img src={arrowLeft} class="opacity-70 h-5 mt-0.5" alt="" />
+        <span class="font-bold text-xl">Cancel order</span>
       </button>
-      <button class="flex items-center text-gray-600">
-        <span>ENG</span>
+
+      <!-- Langauge -->
+      <button
+        class="flex items-center text-black/70 gap-2 rounded-lg bg-[var(--secondary)] p-3 cursor-pointer"
+      >
+        <img src={globe} class="opacity-70 h-5 mt-0.5" alt="" />
+        <span class="font-bold text-xl">ENG</span>
       </button>
     </div>
+
     <div class="flex items-center space-x-4">
-      <button class="flex items-center text-gray-600">
-        <span>View cart</span>
-      </button>
-      <div class="flex items-center text-gray-600">
-        <span>2 items</span>
-        <span class="ml-2">€ 4.50</span>
-      </div>
+      {#if currentDisplay == 1}
+        <!-- View cart -->
+        <button
+          onclick={() => {
+            currentDisplay = 2;
+          }}
+          class="flex items-center text-black/70 gap-2 rounded-lg bg-[var(--secondary)] p-3 cursor-pointer"
+        >
+          <img src={basket} class="opacity-70 h-5 mt-0.5" alt="" />
+          <span class="font-bold text-xl">View cart</span>
+        </button>
+
+        <!-- Preview text -->
+        <div class="flex items-center text-black/70 font-bold text-xl gap-4">
+          <div class="flex flex-row gap-2 items-center">
+            <img src={cart} class="opacity-70 h-5 mt-0.5" alt="" />
+            <span>2 items</span>
+          </div>
+          <span class="ml-2">€ 4.50</span>
+        </div>
+      {/if}
     </div>
   </div>
 </div>
