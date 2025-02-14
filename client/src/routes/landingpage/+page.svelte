@@ -389,7 +389,7 @@
       <p class="mb-4">{selectedProduct.description}</p>
       <p class="mb-4">Price: ${selectedProduct.price}</p>
       <img src={selectedProduct.image.filename} alt={selectedProduct.name} class="w-full h-48 object-cover rounded-lg mb-4" />
-      <button on:click={closePopup} class="bg-green-400/80 text-white px-4 py-2 rounded-lg">Close</button>
+      <button onclick={closePopup} class="bg-green-400/80 text-white px-4 py-2 rounded-lg">Close</button>
     </div>
   </div>
 {/if}
