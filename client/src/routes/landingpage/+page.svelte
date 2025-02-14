@@ -15,8 +15,8 @@
   import { onMount } from "svelte";
   import { redirect } from "@sveltejs/kit";
   import { goto } from "$app/navigation";
-  import { crossfade } from 'svelte/transition';
-  import { quintOut } from 'svelte/easing';
+  import { crossfade } from "svelte/transition";
+  import { quintOut } from "svelte/easing";
 
   // Interfaces
   interface Product {
@@ -35,56 +35,44 @@
     };
   }
 
-  interface Item {
-    productData: Product;
-    amount: number;
-  }
-
   interface ImageModule {
     default: string;
   }
 
   // Values
-  let cartItems: Item[] = [
+  let cartItems: Product[] = [
     {
-      productData: {
-        id: 1,
-        name: "Morning Boost Smoothie Bowl",
+      id: 1,
+      name: "Morning Boost Smoothie Bowl",
+      description:
+        "A blend of acai, banana, and mixed berries topped with granola, chia seeds, and coconut flakes",
+      price: 4.5,
+      category: {
+        name: "Breakfast",
         description:
-          "A blend of acai, banana, and mixed berries topped with granola, chia seeds, and coconut flakes",
-        price: 4.5,
-        category: {
-          name: "Breakfast",
-          description:
-            "Start your day right with our nutritious breakfast options",
-        },
-        image: {
-          filename:
-            "/src/lib/img/menu/DALLE_2025-01-22_15.59.38_-_A_sleek_and_modern_logo_design_for_a_brand_emphasizing_speed_health_and_convenience._The_logo_features_vibrant_green_and_orange_color_palette_to_sym.jpg",
-          description: "Morning Boost Smoothie Bowl Logo",
-        },
+          "Start your day right with our nutritious breakfast options",
       },
-      amount: 3,
+      image: {
+        filename:
+          "/src/lib/img/menu/DALLE_2025-01-22_15.59.38_-_A_sleek_and_modern_logo_design_for_a_brand_emphasizing_speed_health_and_convenience._The_logo_features_vibrant_green_and_orange_color_palette_to_sym.jpg",
+        description: "Morning Boost Smoothie Bowl Logo",
+      },
     },
-
     {
-      productData: {
-        id: 6,
-        name: "Zesty Chickpea Wrap",
-        description:
-          "Whole-grain wrap with spiced chickpeas, shredded carrots, lettuce, and hummus",
-        price: 4.5,
-        category: {
-          name: "Lunch & Dinner",
-          description: "Healthy and satisfying meals for any time of day",
-        },
-        image: {
-          filename:
-            "/src/lib/img/menu/DALLE_2025-01-22_16.00.00_-_A_photorealistic_depiction_of_a_wrap_called_Zesty_Chickpea_Wrap._The_wrap_is_made_with_a_whole-grain_tortilla_filled_with_spiced_chickpeas_shredde.jpg",
-          description: "Zesty Chickpea Wrap",
-        },
+      id: 6,
+      name: "Zesty Chickpea Wrap",
+      description:
+        "Whole-grain wrap with spiced chickpeas, shredded carrots, lettuce, and hummus",
+      price: 4.5,
+      category: {
+        name: "Lunch & Dinner",
+        description: "Healthy and satisfying meals for any time of day",
       },
-      amount: 5,
+      image: {
+        filename:
+          "/src/lib/img/menu/DALLE_2025-01-22_16.00.00_-_A_photorealistic_depiction_of_a_wrap_called_Zesty_Chickpea_Wrap._The_wrap_is_made_with_a_whole-grain_tortilla_filled_with_spiced_chickpeas_shredde.jpg",
+        description: "Zesty Chickpea Wrap",
+      },
     },
   ];
   let productsData: Product[] = [];
@@ -94,24 +82,21 @@
   const images = import.meta.glob("../../lib/img/menu/*.jpg", { eager: true });
 
   // Core values
-  let currentDisplay: number = 1; // 1 = items, 2 = cart
+  let currentDisplay: number = 2; // 1 = items, 2 = cart
+  let totalPrice = 0;
 
   // Functions
+  function updateTotalPrice() {
+    let num = 0;
+    cartItems.forEach((productsData: Product) => {
+      num += productsData.price;
+    });
+    totalPrice = num;
+  }
+
   function addCartItem(productData: Product) {
-    let alreadyExists = cartItems.find(
-      (cartItem) => cartItem.productData.name == productData.name
-    ) as Item;
-
-    if (!alreadyExists) {
-      cartItems.push({
-        productData: productData,
-        amount: 1,
-      });
-
-      return;
-    }
-
-    alreadyExists.amount += 1;
+    cartItems.push(productData);
+    updateTotalPrice();
   }
 
   function getImagePath(filename: string): string {
@@ -163,6 +148,9 @@
     }
   }
 
+  // Remove this
+  // This is for debugging
+  updateTotalPrice();
 </script>
 
 <!-- Main display -->
@@ -174,22 +162,32 @@
   {#if currentDisplay == 1}
     <div id="landingpagecontainer" class="flex w-full h-full">
       <!-- Sidebar -->
-      <div id="sidebar" class="bg-background p-4 bg-[var(--secondary)] w-[256px]">
+      <div
+        id="sidebar"
+        class="bg-background p-4 bg-[var(--secondary)] w-[256px]"
+      >
         <ul>
           {#each categories as category}
             <li class="mb-4">
               <button
                 on:click={() => selectCategory(category)}
-                class="w-full text-center p-4 rounded-lg {selectedCategory === category ? 'bg-[var(--lightorange)]' : 'bg-transparent'}"
+                class="w-full text-center p-4 rounded-lg {selectedCategory ===
+                category
+                  ? 'bg-[var(--lightorange)]'
+                  : 'bg-transparent'}"
                 style="height: 200px;"
               >
-                <img src={getCategoryImage(category)} alt={category} class="w-16 h-16 mx-16 mb-2 rounded-xl" />
+                <img
+                  src={getCategoryImage(category)}
+                  alt={category}
+                  class="w-16 h-16 mx-16 mb-2 rounded-xl"
+                />
                 <span class="text-lg font-bold text-black">{category}</span>
               </button>
             </li>
           {/each}
         </ul>
-      </div>  
+      </div>
 
       <div id="categoriecontainer" class="flex flex-col h-full">
         <div class="flex flex-row items-start">
@@ -234,35 +232,49 @@
             <div class="space-y-5">
               {#each cartItems as cartItem}
                 <div
-                  class="w-full p-5 h-50 flex gap-5 text-3xl font-bold text-black/70 bg-[var(--secondary)] rounded-4xl"
+                  class="w-full p-5 h-50 flex gap-5 text-3xl font-bold text-black/70 rounded-4xl"
                 >
                   <img
-                    src={cartItem.productData.image.filename}
+                    src={cartItem.image.filename}
                     alt=""
-                    class="h-full rounded-4xl"
+                    class="h-full rounded-3xl"
                   />
 
-                  <div class="flex flex-col gap-3 justify-between w-full">
-                    <div class="flex justify-between w-full p-5">
-                      <p>{cartItem.productData.name}</p>
-                      <p class="font-normal">€ {cartItem.productData.price}0</p>
+                  <div class="flex flex-col gap-3 justify-between w-full py-3">
+                    <div class="flex justify-between w-full">
+                      <div>
+                        <p>{cartItem.name}</p>
+                        <div
+                          class="text-sm text-black/30 w-120 text-nowrap overflow-hidden"
+                        >
+                          {cartItem.description}
+                        </div>
+                      </div>
+                      <p class="text-4xl">€ {cartItem.price}0</p>
                     </div>
 
                     <div class="flex items-center gap-5">
                       <button
                         id="purchaseButton"
-                        class="w-auto h-auto rounded-4xl bg-[var(--secondary)] p-4 text-2xl font-bold text-black/80"
-                        >+</button
+                        class="w-auto h-auto rounded-2xl bg-[var(--secondary)] px-6 py-3 text-2xl font-bold text-black/80"
+                        >Delete</button
                       >
                       <button
                         id="purchaseButton"
-                        class="w-auto h-auto rounded-4xl bg-[var(--secondary)] p-4 text-2xl font-bold text-black/80"
-                        >-</button
+                        class="w-auto h-auto rounded-2xl bg-[var(--secondary)] px-6 py-3 text-2xl font-bold text-black/80"
+                        >Duplicate</button
                       >
                     </div>
                   </div>
                 </div>
               {/each}
+
+              <div
+                class="flex flex-row justify-between text-black/80 text-4xl font-bold"
+              >
+                <span>Total:</span>
+                <span>€ {totalPrice}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -292,7 +304,13 @@
         class="flex items-center text-black/70 gap-2 rounded-4xl bg-[var(--secondary)] p-4 cursor-pointer"
       >
         <img src={arrowLeft} class="opacity-70 h-5 mt-0.5" alt="" />
-        <span class="font-bold text-xl">Cancel order</span>
+        <span class="font-bold text-xl">
+          {#if currentDisplay == 1}
+            Cancel order
+          {:else}
+            Go back
+          {/if}
+        </span>
       </button>
 
       <!-- Langauge -->
