@@ -194,6 +194,11 @@
       <div id="categoriecontainer" class="flex flex-col h-full">
         <div class="flex flex-row items-start">
           <img alt="The project dino" class="w-48 mt-24" src={dino} />
+          <div class="mt-42">
+            {#if selectedCategory}
+              <p class="text-lg font-bold">{productsData.find(product => product.category.name === selectedCategory)?.category.description}</p>
+            {/if}
+          </div>
         </div>
 
         <div id="productscontainer" class="grid grid-cols-3 gap-4">
