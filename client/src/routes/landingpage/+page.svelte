@@ -15,6 +15,7 @@
   // Imports
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
+  import Icon from "@iconify/svelte";
 
   // Interfaces
   interface Product {
@@ -42,6 +43,8 @@
   let productsData: Product[] = [];
   let categories: string[] = [];
   let selectedCategory: string = "";
+  let showPopup: boolean = false;
+  let selectedProduct: Product | null = null;
 
   const images = import.meta.glob("../../lib/img/menu/*.jpg", { eager: true });
 
@@ -85,6 +88,16 @@
   function getImagePath(filename: string): string {
     const imagePath = `../../lib/img/menu/${filename}`;
     return (images[imagePath] as ImageModule)?.default || "";
+  }
+
+  function openPopup(product: Product) {
+    selectedProduct = product;
+    showPopup = true;
+  }
+
+  function closePopup() {
+    showPopup = false;
+    selectedProduct = null;
   }
 
   onMount(async () => {
@@ -136,13 +149,12 @@
   updateCartValues();
 </script>
 
-<!-- Popup yes/no -->
-<dir class="absolute w-full h-full bg-black/50"> </dir>
-
 <!-- Main display -->
 <div
   id="mainDisplay"
-  class="w-full h-screen flex flex-col absolute bg-[var(--background)]"
+  class="w-full h-screen flex flex-col absolute bg-[var(--background)] {showPopup
+    ? 'blurred'
+    : ''}"
 >
   <!-- Items -->
   {#if currentDisplay == 1}
@@ -212,9 +224,21 @@
                 />
                 <h3 class="text-xl font-bold pt-2">{productData.name}</h3>
               </div>
-              <p class="pl-3 pb-3 text-green-600 font-semibold">
-                ${productData.price}
-              </p>
+              <div class="flex flex-row">
+                <p class="pl-3 pb-3 text-green-600 font-semibold">
+                  ${productData.price}
+                </p>
+                <div class="ml-32">
+                  <!-- svelte-ignore a11y_click_events_have_key_events -->
+                  <!-- svelte-ignore a11y_no_static_element_interactions -->
+                  <div
+                    onclick={() => openPopup(productData)}
+                    class="cursor-pointer"
+                  >
+                    <Icon icon="carbon:information" width="24" height="24" />
+                  </div>
+                </div>
+              </div>
             </button>
           {/each}
         </div>
@@ -357,3 +381,31 @@
     </div>
   </div>
 </div>
+
+<!-- Popup -->
+{#if showPopup && selectedProduct}
+  <div
+    class="fixed inset-0 flex items-center justify-center bg-opacity-80 z-50"
+  >
+    <div class="bg-white p-8 rounded-lg shadow-lg w-1/2">
+      <h2 class="text-2xl font-bold mb-4">{selectedProduct.name}</h2>
+      <p class="mb-4">{selectedProduct.description}</p>
+      <p class="mb-4">Price: ${selectedProduct.price}</p>
+      <img
+        src={selectedProduct.image.filename}
+        alt={selectedProduct.name}
+        class="w-full h-48 object-cover rounded-lg mb-4"
+      />
+      <button
+        onclick={closePopup}
+        class="bg-green-400/80 text-white px-4 py-2 rounded-lg">Close</button
+      >
+    </div>
+  </div>
+{/if}
+
+<style>
+  .blurred {
+    filter: blur(5px);
+  }
+</style>
