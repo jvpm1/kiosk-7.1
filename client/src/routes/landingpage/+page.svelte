@@ -16,8 +16,6 @@
   import { onMount } from "svelte";
   import { redirect } from "@sveltejs/kit";
   import { goto } from "$app/navigation";
-  import { crossfade } from "svelte/transition";
-  import { quintOut } from "svelte/easing";
 
   // Interfaces
   interface Product {
@@ -216,19 +214,19 @@
           </div>
         </div>
 
-        <div id="productscontainer" class="grid grid-cols-3 gap-4">
+        <div id="productscontainer" class="grid grid-cols-3 gap-12 mx-6">
           {#each productsData.filter((productData) => productData.category.name === selectedCategory) as productData (productData.id)}
             <button
-              class="bg-white p-4 rounded shadow flex flex-col gap-2"
+              class="bg-white p-4 rounded shadow flex flex-col items-start"
               on:click={() => addCartItem(productData)}
             >
-              <div class="h-full w-48">
+              <div class="h-58 w-48">
                 <img
                   alt={productData.name}
-                  class="w-64 h-32 object-cover rounded"
+                  class="w-64 h-38 object-cover rounded"
                   src={productData.image.filename}
                 />
-                <h3 class="text-xl font-bold">{productData.name}</h3>
+                <h3 class="text-xl font-bold pt-2">{productData.name}</h3>
               </div>
               <p class="text-green-600 font-semibold">${productData.price}</p>
             </button>
