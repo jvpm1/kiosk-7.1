@@ -14,7 +14,6 @@
 
   // Imports
   import { onMount } from "svelte";
-  import { redirect } from "@sveltejs/kit";
   import { goto } from "$app/navigation";
 
   // Interfaces
@@ -81,7 +80,7 @@
   const images = import.meta.glob("../../lib/img/menu/*.jpg", { eager: true });
 
   // Core values
-  let currentDisplay: number = 2; // 1 = items, 2 = cart
+  let currentDisplay: number = 1; // 1 = items, 2 = cart
   let totalPrice: number = 0;
   let totalInCart: number = 0;
 
@@ -165,23 +164,22 @@
       <!-- Sidebar -->
       <div
         id="sidebar"
-        class="bg-background rounded-br-xl p-4 bg-[var(--secondary)] w-[256px]"
+        class="bg-background rounded-br-4xl p-4 bg-[var(--secondary)] w-[256px] flex flex-col items-center"
       >
-        <ul>
+        <ul class="space-y-5">
           {#each categories as category}
-            <li class="mb-4">
+            <li>
               <button
                 on:click={() => selectCategory(category)}
-                class="w-full text-center p-4 rounded-lg {selectedCategory ===
+                class="w-full text-center p-10 rounded-lg flex flex-col items-center {selectedCategory ===
                 category
                   ? 'bg-[var(--lightorange)]'
                   : 'bg-transparent'}"
-                style="height: 200px;"
               >
                 <img
                   src={getCategoryImage(category)}
                   alt={category}
-                  class="w-16 h-16 mx-16 mb-2 rounded-xl"
+                  class="w-16 h-16 mb-2 rounded-xl"
                 />
                 <span class="text-lg font-bold text-black">{category}</span>
               </button>
@@ -190,7 +188,7 @@
         </ul>
       </div>
 
-      <div id="categoriecontainer" class="flex flex-col h-full">
+      <div id="categoriecontainer" class="flex flex-col h-full w-full">
         <div class="flex flex-row items-start">
           <img alt="The project dino" class="w-48 mt-24" src={dino} />
           <div class="relative" style="width: 400px; height: 300px;">
@@ -204,7 +202,7 @@
                 class="absolute inset-0 flex items-center justify-center p-4"
                 style="width: 300px; margin: auto;"
               >
-                <p class="text-lg font-bold">
+                <p class="text-lg font-bold text-center">
                   {productsData.find(
                     (product) => product.category.name === selectedCategory
                   )?.category.description}
@@ -214,21 +212,23 @@
           </div>
         </div>
 
-        <div id="productscontainer" class="grid grid-cols-3 gap-12 mx-6">
+        <div id="productscontainer" class="grid grid-cols-3 gap-12 mx-8">
           {#each productsData.filter((productData) => productData.category.name === selectedCategory) as productData (productData.id)}
             <button
-              class="bg-white p-4 rounded shadow flex flex-col items-start"
+              class="bg-white rounded shadow flex flex-col items-start"
               on:click={() => addCartItem(productData)}
             >
-              <div class="h-58 w-48">
+              <div class="h-58 w-full">
                 <img
                   alt={productData.name}
-                  class="w-64 h-38 object-cover rounded"
+                  class="w-full h-38 object-cover rounded-t"
                   src={productData.image.filename}
                 />
                 <h3 class="text-xl font-bold pt-2">{productData.name}</h3>
               </div>
-              <p class="text-green-600 font-semibold">${productData.price}</p>
+              <p class="pl-3 pb-3 text-green-600 font-semibold">
+                ${productData.price}
+              </p>
             </button>
           {/each}
         </div>
