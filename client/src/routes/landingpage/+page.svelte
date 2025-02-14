@@ -22,7 +22,7 @@
     id: number;
     name: string;
     description: string;
-    price: number;
+    price: string;
     image: {
       filename: string;
       description: string;
@@ -39,41 +39,7 @@
   }
 
   // Values
-  let cartItems: Product[] = [
-    {
-      id: 1,
-      name: "Morning Boost Smoothie Bowl",
-      description:
-        "A blend of acai, banana, and mixed berries topped with granola, chia seeds, and coconut flakes",
-      price: 4.5,
-      category: {
-        name: "Breakfast",
-        description:
-          "Start your day right with our nutritious breakfast options",
-      },
-      image: {
-        filename:
-          "/src/lib/img/menu/DALLE_2025-01-22_15.59.38_-_A_sleek_and_modern_logo_design_for_a_brand_emphasizing_speed_health_and_convenience._The_logo_features_vibrant_green_and_orange_color_palette_to_sym.jpg",
-        description: "Morning Boost Smoothie Bowl Logo",
-      },
-    },
-    {
-      id: 6,
-      name: "Zesty Chickpea Wrap",
-      description:
-        "Whole-grain wrap with spiced chickpeas, shredded carrots, lettuce, and hummus",
-      price: 4.5,
-      category: {
-        name: "Lunch & Dinner",
-        description: "Healthy and satisfying meals for any time of day",
-      },
-      image: {
-        filename:
-          "/src/lib/img/menu/DALLE_2025-01-22_16.00.00_-_A_photorealistic_depiction_of_a_wrap_called_Zesty_Chickpea_Wrap._The_wrap_is_made_with_a_whole-grain_tortilla_filled_with_spiced_chickpeas_shredde.jpg",
-        description: "Zesty Chickpea Wrap",
-      },
-    },
-  ];
+  let cartItems: Product[] = [];
   let productsData: Product[] = [];
   let categories: string[] = [];
   let selectedCategory: string = "";
@@ -83,7 +49,7 @@
   const images = import.meta.glob("../../lib/img/menu/*.jpg", { eager: true });
 
   // Core values
-  let currentDisplay: number = 1; // 1 = items, 2 = cart
+  let currentDisplay: number = 2; // 1 = items, 2 = cart
   let totalPrice: number = 0;
   let totalInCart: number = 0;
 
@@ -97,8 +63,25 @@
     totalInCart = cartItems.length;
   }
 
+  function deleteCartItem(productData: Product) {
+    let alreadyFound = false;
+
+    cartItems = cartItems.filter((_productData: Product) => {
+      if (alreadyFound) return true;
+
+      const isSame = productData.id == _productData.id;
+      if (isSame) {
+        alreadyFound = true;
+      }
+      return !isSame;
+    });
+
+    updateCartValues();
+  }
+
   function addCartItem(productData: Product) {
-    cartItems.push(productData);
+    cartItems = [...cartItems, productData];
+
     updateCartValues();
   }
 
@@ -189,7 +172,7 @@
           {#each categories as category}
             <li>
               <button
-                on:click={() => selectCategory(category)}
+                onclick={() => selectCategory(category)}
                 class="w-full text-center p-10 rounded-lg flex flex-col items-center {selectedCategory ===
                 category
                   ? 'bg-[var(--lightorange)]'
@@ -235,7 +218,7 @@
           {#each productsData.filter((productData) => productData.category.name === selectedCategory) as productData (productData.id)}
             <button
               class="bg-white rounded shadow flex flex-col items-start"
-              on:click={() => addCartItem(productData)}
+              onclick={() => addCartItem(productData)}
             >
               <div class="h-58 w-full">
                 <img
@@ -275,37 +258,38 @@
             <h2 class="text-8xl font-bold text-black/80">Your cart items</h2>
 
             <!-- Items -->
-            <div class="space-y-5">
-              {#each cartItems as cartItem}
+            <div class="space-y-5 max-h-[60vh] overflow-y-scroll">
+              {#each cartItems as productData}
                 <div
                   class="w-full p-5 h-50 flex gap-5 text-3xl font-bold text-black/70 rounded-4xl"
                 >
                   <img
-                    src={cartItem.image.filename}
-                    alt=""
+                    src={productData.image.filename}
+                    alt={productData.name}
                     class="h-full rounded-3xl"
                   />
 
                   <div class="flex flex-col gap-3 justify-between w-full py-3">
                     <div class="flex justify-between w-full">
                       <div>
-                        <p>{cartItem.name}</p>
+                        <p>{productData.name}</p>
                         <div
                           class="text-sm text-black/30 w-120 text-nowrap overflow-hidden"
                         >
-                          {cartItem.description}
+                          {productData.description}
                         </div>
                       </div>
-                      <p class="text-4xl">€ {cartItem.price}</p>
+                      <p class="text-4xl">€ {productData.price}</p>
                     </div>
 
                     <div class="flex items-center gap-5">
                       <button
-                        id="purchaseButton"
+                        onclick={() => deleteCartItem(productData)}
                         class="w-auto h-auto rounded-2xl bg-[var(--secondary)] px-6 py-3 text-2xl font-bold text-black/80"
                         >Delete</button
                       >
                       <button
+                        onclick={() => addCartItem(productData)}
                         id="purchaseButton"
                         class="w-auto h-auto rounded-2xl bg-[var(--secondary)] px-6 py-3 text-2xl font-bold text-black/80"
                         >Duplicate</button
@@ -314,18 +298,17 @@
                   </div>
                 </div>
               {/each}
-
-              <div class="w-full h-0.5 bg-black/20"></div>
-
-              <div
-                class="flex flex-row justify-between text-black/80 text-4xl font-bold"
-              >
-                <span>Total:</span>
-                <span>€ {totalPrice}</span>
-              </div>
-
-              <div class="w-full h-0.5 bg-black/20"></div>
             </div>
+            <div class="w-full h-0.5 bg-black/20"></div>
+
+            <div
+              class="flex flex-row justify-between text-black/80 text-4xl font-bold"
+            >
+              <span>Total:</span>
+              <span>€ {totalPrice}</span>
+            </div>
+
+            <div class="w-full h-0.5 bg-black/20"></div>
           </div>
         </div>
 
@@ -343,7 +326,7 @@
     <div class="flex items-center space-x-4">
       <!-- Cancel Order -->
       <button
-        on:click={() => {
+        onclick={() => {
           if (currentDisplay == 2) {
             currentDisplay = 1;
             return;
@@ -376,7 +359,7 @@
       {#if currentDisplay == 1}
         <!-- View cart -->
         <button
-          on:click={() => {
+          onclick={() => {
             currentDisplay = 2;
           }}
           class="flex items-center text-black/70 gap-2 rounded-3xl bg-[var(--secondary)] p-4 cursor-pointe"
