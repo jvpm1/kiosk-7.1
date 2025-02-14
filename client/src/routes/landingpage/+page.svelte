@@ -5,11 +5,18 @@
   import globe from "$lib/img/bootstrap/globe.svg";
   import cart from "$lib/img/bootstrap/cart.svg";
   import basket from "$lib/img/bootstrap/basket.svg";
+  import breakfast from "$lib/img/breakfast.jpg";
+  import lunchdinner from "$lib/img/lunch&dinner.jpg";
+  import sides from "$lib/img/sides.jpg";
+  import snacks from "$lib/img/snacks.jpg";
+  import drink from "$lib/img/drink.jpg";
 
   // Imports
   import { onMount } from "svelte";
   import { redirect } from "@sveltejs/kit";
   import { goto } from "$app/navigation";
+  import { crossfade } from 'svelte/transition';
+  import { quintOut } from 'svelte/easing';
 
   // Interfaces
   interface Product {
@@ -67,7 +74,7 @@
   const images = import.meta.glob("../../lib/img/menu/*.jpg", { eager: true });
 
   // Core values
-  let currentDisplay: number = 2; // 1 = items, 2 = cart
+  let currentDisplay: number = 1; // 1 = items, 2 = cart
 
   // Functions
   function getImagePath(filename: string): string {
@@ -107,6 +114,24 @@
   function selectCategory(category: string) {
     selectedCategory = category;
   }
+
+  function getCategoryImage(category: string): string {
+    switch (category) {
+      case "Breakfast":
+        return breakfast;
+      case "Lunch & Dinner":
+        return lunchdinner;
+      case "Sides":
+        return sides;
+      case "Snacks":
+        return snacks;
+      case "Drinks":
+        return drink;
+      default:
+        return "";
+    }
+  }
+
 </script>
 
 <!-- Main display -->
@@ -118,21 +143,22 @@
   {#if currentDisplay == 1}
     <div id="landingpagecontainer" class="flex w-full h-full">
       <!-- Sidebar -->
-      <div id="sidebar" class="bg-background p-4 h-full bg-[var(--secondary)]">
-        <!-- <h2 class="text-2xl font-bold mb-4">Categories</h2> -->
+      <div id="sidebar" class="bg-background p-4 bg-[var(--secondary)] w-[256px]">
         <ul>
           {#each categories as category}
-            <li class="mb-2">
-              <a
-                href="#"
-                onclick={() => selectCategory(category)}
-                class="text-lg font-bold text-black hover:underline"
-                >{category}</a
+            <li class="mb-4">
+              <button
+                on:click={() => selectCategory(category)}
+                class="w-full text-center p-4 rounded-lg {selectedCategory === category ? 'bg-[var(--lightorange)]' : 'bg-transparent'}"
+                style="height: 200px;"
               >
+                <img src={getCategoryImage(category)} alt={category} class="w-16 h-16 mx-16 mb-2 rounded-xl" />
+                <span class="text-lg font-bold text-black">{category}</span>
+              </button>
             </li>
           {/each}
         </ul>
-      </div>
+      </div>  
 
       <div id="categoriecontainer" class="flex flex-col h-full">
         <div class="flex flex-row items-start">
@@ -143,18 +169,16 @@
           {#each productsData.filter((productData) => productData.category.name === selectedCategory) as productData (productData.id)}
             <button
               class="bg-white p-4 rounded shadow flex flex-col gap-2"
-              onclick={() => addCartItem(productData)}
+              on:click={() => addCartItem(productData)}
             >
-              <div class="h-full">
+              <div class="h-full w-48">
                 <img
                   alt={productData.name}
-                  class="w-full h-32 object-cover rounded"
+                  class="w-64 h-32 object-cover rounded"
                   src={productData.image.filename}
                 />
                 <h3 class="text-xl font-bold">{productData.name}</h3>
               </div>
-
-              <!-- <p class="text-gray-700">{product.description}</p> -->
               <p class="text-green-600 font-semibold">${productData.price}</p>
             </button>
           {/each}
@@ -191,7 +215,7 @@
     <div class="flex items-center space-x-4">
       <!-- Cancel Order -->
       <button
-        onclick={() => {
+        on:click={() => {
           if (currentDisplay == 2) {
             currentDisplay = 1;
             return;
@@ -218,7 +242,7 @@
       {#if currentDisplay == 1}
         <!-- View cart -->
         <button
-          onclick={() => {
+          on:click={() => {
             currentDisplay = 2;
           }}
           class="flex items-center text-black/70 gap-2 rounded-lg bg-[var(--secondary)] p-3 cursor-pointer"
