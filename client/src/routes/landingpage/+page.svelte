@@ -10,6 +10,7 @@
   import sides from "$lib/img/sides.jpg";
   import snacks from "$lib/img/snacks.jpg";
   import drink from "$lib/img/drink.jpg";
+  import speachbubble from "$lib/img/speachbubble.jpg"
 
   // Imports
   import { onMount } from "svelte";
@@ -174,7 +175,7 @@
   {#if currentDisplay == 1}
     <div id="landingpagecontainer" class="flex w-full h-full">
       <!-- Sidebar -->
-      <div id="sidebar" class="bg-background p-4 bg-[var(--secondary)] w-[256px]">
+      <div id="sidebar" class="bg-background rounded-br-xl p-4 bg-[var(--secondary)] w-[256px]">
         <ul>
           {#each categories as category}
             <li class="mb-4">
@@ -191,15 +192,20 @@
         </ul>
       </div>  
 
+  
       <div id="categoriecontainer" class="flex flex-col h-full">
         <div class="flex flex-row items-start">
           <img alt="The project dino" class="w-48 mt-24" src={dino} />
-          <div class="mt-42">
+          <div class="relative" style="width: 400px; height: 300px;">
+            <img src={speachbubble} alt="Speech Bubble" class="absolute inset-0 w-full h-full object-contain" />
             {#if selectedCategory}
-              <p class="text-lg font-bold">{productsData.find(product => product.category.name === selectedCategory)?.category.description}</p>
+              <div class="absolute inset-0 flex items-center justify-center p-4" style="width: 300px; margin: auto;">
+                <p class="text-lg font-bold">{productsData.find(product => product.category.name === selectedCategory)?.category.description}</p>
+              </div>
             {/if}
           </div>
         </div>
+     
 
         <div id="productscontainer" class="grid grid-cols-3 gap-4">
           {#each productsData.filter((productData) => productData.category.name === selectedCategory) as productData (productData.id)}
