@@ -233,7 +233,7 @@
                   ${productData.price}
                 </p>
                 <div class="ml-32">
-                  <div on:click={() => openPopup(productData)} class="cursor-pointer">
+                  <div onclick={() => openPopup(productData)} class="cursor-pointer">
                     <Icon icon="carbon:information" width="24" height="24" />
                   </div>
                 </div>
