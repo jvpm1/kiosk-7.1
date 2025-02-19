@@ -16,6 +16,7 @@
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
   import Icon from "@iconify/svelte";
+  import { fade } from "svelte/transition";
 
   // Interfaces
   interface Product {
@@ -49,11 +50,23 @@
   const images = import.meta.glob("../../lib/img/menu/*.jpg", { eager: true });
 
   // Core values
-  let currentDisplay: number = 2; // 1 = items, 2 = cart
+  let currentDisplay: number = 1; // 1 = items, 2 = cart
   let totalPrice: number = 0;
   let totalInCart: number = 0;
 
   // Functions
+  function getAmountInCart(productData: Product) {
+    let num = 0;
+    cartItems.forEach((_productData: Product) => {
+      if (_productData.id != productData.id) {
+        return;
+      }
+
+      num++;
+    });
+    return num;
+  }
+
   function updateCartValues() {
     let num = 0;
     cartItems.forEach((productsData: Product) => {
@@ -212,10 +225,23 @@
 
         <div id="productscontainer" class="grid grid-cols-3 gap-12 mx-8">
           {#each productsData.filter((productData) => productData.category.name === selectedCategory) as productData (productData.id)}
+            {@const isInCart = cartItems.find(
+              (_productData) => _productData.id == productData.id
+            )}
             <button
-              class="bg-white rounded shadow flex flex-col items-start"
+              class="bg-white rounded shadow flex flex-col items-start product-button"
               onclick={() => addCartItem(productData)}
             >
+              {#if isInCart}
+                <div in:fade class="absolute z-10 p-1">
+                  <div
+                    class="rounded-full bg-white font-bold min-w-6 h-6 shadow-2xl flex items-center justify-center px-2"
+                  >
+                    {getAmountInCart(productData)}
+                  </div>
+                </div>
+              {/if}
+
               <div class="h-58 w-full">
                 <img
                   alt={productData.name}
@@ -407,5 +433,15 @@
 <style>
   .blurred {
     filter: blur(5px);
+  }
+
+  @keyframes effect {
+    from {
+      opacity: 0%;
+    }
+  }
+
+  .product-button {
+    animation: effect 0.2s ease-in-out;
   }
 </style>
