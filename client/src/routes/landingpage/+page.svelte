@@ -11,11 +11,13 @@
   import snacks from "$lib/img/snacks.jpg";
   import drink from "$lib/img/drink.jpg";
   import speachbubble from "$lib/img/speachbubble.jpg";
+  import personArmsUp from "$lib/img/bootstrap/person-arms-up.svg";
 
   // Imports
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
   import Icon from "@iconify/svelte";
+  import { fade } from "svelte/transition";
 
   // Interfaces
   interface Product {
@@ -52,10 +54,23 @@
 
   // Core values
   let currentDisplay: number = 1; // 1 = items, 2 = cart
+  let babyMode: boolean = false;
   let totalPrice: number = 0;
   let totalInCart: number = 0;
 
   // Functions
+  function getAmountInCart(productData: Product) {
+    let num = 0;
+    cartItems.forEach((_productData: Product) => {
+      if (_productData.id != productData.id) {
+        return;
+      }
+
+      num++;
+    });
+    return num;
+  }
+
   function updateCartValues() {
     let num = 0;
     cartItems.forEach((productsData: Product) => {
@@ -161,24 +176,27 @@
 <!-- Main display -->
 <div
   id="mainDisplay"
-  class="w-full h-screen flex flex-col absolute bg-[var(--background)] {showPopup
+  class="w-full h-screen flex flex-col absolute bg-[var(--background)] justify-end *:transition-all *:overflow-hidden {showPopup
     ? 'blurred'
     : ''}"
 >
   <!-- Items -->
   {#if currentDisplay == 1}
-    <div id="landingpagecontainer" class="flex w-full h-full">
+    <div
+      id="landingpagecontainer"
+      class="flex w-full {babyMode ? 'h-[700px]' : 'h-full'}"
+    >
       <!-- Sidebar -->
       <div
         id="sidebar"
-        class="bg-background rounded-br-4xl p-4 bg-[var(--secondary)] w-[256px] flex flex-col items-center"
+        class="bg-background rounded-br-4xl overflow-y-scroll p-4 bg-[var(--secondary)] w-[256px] flex flex-col items-center"
       >
         <ul class="space-y-5">
           {#each categories as category}
             <li>
               <button
                 onclick={() => selectCategory(category)}
-                class="w-full text-center p-10 rounded-lg flex flex-col items-center {selectedCategory ===
+                class="w-full text-center p-10 rounded-3xl flex flex-col items-center {selectedCategory ===
                 category
                   ? 'bg-[var(--lightorange)]'
                   : 'bg-transparent'}"
@@ -186,7 +204,7 @@
                 <img
                   src={getCategoryImage(category)}
                   alt={category}
-                  class="w-16 h-16 mb-2 rounded-xl"
+                  class="w-20 h-20 mb-2 rounded-xl"
                 />
                 <span class="text-lg font-bold text-black">{category}</span>
               </button>
@@ -194,9 +212,11 @@
           {/each}
         </ul>
       </div>
-      
-       <!-- speachbubble -->
-      <div id="categoriecontainer" class="flex flex-col h-full w-full">
+
+      <div
+        id="categoriecontainer"
+        class="flex flex-col h-full w-full overflow-y-scroll"
+      >
         <div class="flex flex-row items-start">
           <img alt="The project dino" class="w-48 mt-24" src={dino} />
           <div class="relative" style="width: 400px; height: 300px;">
@@ -223,10 +243,23 @@
        <!-- productcontainer -->
         <div id="productscontainer" class="grid grid-cols-3 gap-12 mx-8">
           {#each productsData.filter((productData) => productData.category.name === selectedCategory) as productData (productData.id)}
+            {@const isInCart = cartItems.find(
+              (_productData) => _productData.id == productData.id
+            )}
             <button
-              class="bg-white rounded shadow flex flex-col items-start"
+              class="bg-white rounded shadow flex flex-col items-start product-button"
               onclick={() => addCartItem(productData)}
             >
+              {#if isInCart}
+                <div in:fade class="absolute z-10 p-1">
+                  <div
+                    class="rounded-full bg-white font-bold min-w-6 h-6 shadow-2xl flex items-center justify-center px-2"
+                  >
+                    {getAmountInCart(productData)}
+                  </div>
+                </div>
+              {/if}
+
               <div class="h-58 w-full">
                 <img
                   alt={productData.name}
@@ -260,10 +293,12 @@
   <!-- Cart -->
   {#if currentDisplay == 2}
     <div
-      class="flex flex-col items-center justify-between w-full h-full gap-2 p-4"
+      class="flex flex-col items-center justify-between w-full gap-2 p-4 {babyMode
+        ? 'h-[700px]'
+        : 'h-full'}"
     >
       <div id="itemsContainer" class="w-4/5 h-full flex-col flex">
-        <div class="w-full h-full flex flex-col">
+        <div class="w-full h-full flex flex-col overflow-y-scroll">
           <img src={dino} class="h-50 mx-auto" alt="" />
 
           <div class="space-y-5">
@@ -297,13 +332,13 @@
                     <div class="flex items-center gap-5">
                       <button
                         onclick={() => deleteCartItem(productData)}
-                        class="w-auto h-auto rounded-2xl bg-[var(--secondary)] px-6 py-3 text-2xl font-bold text-black/80"
+                        class="w-auto h-auto rounded-2xl bg-[var(--secondary)] px-6 py-3 text-xl font-bold text-black/80"
                         >Delete</button
                       >
                       <button
                         onclick={() => addCartItem(productData)}
                         id="purchaseButton"
-                        class="w-auto h-auto rounded-2xl bg-[var(--secondary)] px-6 py-3 text-2xl font-bold text-black/80"
+                        class="w-auto h-auto rounded-2xl bg-[var(--secondary)] px-6 py-3 text-xl font-bold text-black/80"
                         >Duplicate</button
                       >
                     </div>
@@ -364,6 +399,16 @@
       >
         <img src={globe} class="opacity-70 h-5 mt-0.5" alt="" />
         <span class="font-bold text-xl">ENG</span>
+      </button>
+
+      <!-- Babymode -->
+      <button
+        onclick={() => {
+          babyMode = !babyMode;
+        }}
+        class="flex items-center text-black/70 gap-2 rounded-4xl bg-[var(--secondary)] p-4 cursor-pointer"
+      >
+        <img src={personArmsUp} class="opacity-70 h-5 mt-0.5" alt="" />
       </button>
     </div>
 
