@@ -8,3 +8,20 @@
   --accent: #b4e366;
   --lightorange: #ffb181;
 }
+
+  .blurred {
+    filter: blur(5px);
+  }
+
+  @keyframes progress-animation {
+    from {
+      stroke-dasharray: 0 314;
+    }
+    to {
+      stroke-dasharray: var(--progress-dasharray);
+    }
+  }
+
+  .progress-circle {
+    animation: progress-animation 2s ease-out forwards;
+  }
