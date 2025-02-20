@@ -440,9 +440,13 @@
 
 <!-- Popup -->
 {#if showPopup && selectedProduct}
-  <div class="fixed inset-0 flex items-center justify-center bg-opacity-50 z-50">
+  <div
+    class="fixed inset-0 flex items-center justify-center bg-opacity-50 z-50"
+  >
     <div class="bg-white p-8 rounded-lg shadow-lg w-1/2 relative">
-      <h2 class="text-3xl font-bold mb-4 text-center">{selectedProduct.name}</h2>
+      <h2 class="text-3xl font-bold mb-4 text-center">
+        {selectedProduct.name}
+      </h2>
       <img
         src={selectedProduct.image.filename}
         alt={selectedProduct.name}
@@ -471,10 +475,15 @@
             stroke-linecap="round"
             transform="rotate(-90 60 60)"
             class="progress-circle"
-            style="--progress-dasharray: {getStrokeDasharray(selectedProduct.calories, 500)};"
+            style="--progress-dasharray: {getStrokeDasharray(
+              selectedProduct.calories,
+              500
+            )};"
           />
         </svg>
-        <span class="absolute text-xl font-bold mt-2">{selectedProduct.calories} cal</span>
+        <span class="absolute text-xl font-bold mt-2"
+          >{selectedProduct.calories} cal</span
+        >
       </div>
       <button
         onclick={closePopup}
@@ -485,5 +494,3 @@
     </div>
   </div>
 {/if}
-
-
