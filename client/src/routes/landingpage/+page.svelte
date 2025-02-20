@@ -34,6 +34,8 @@
       name: string;
       description: string;
     };
+
+    calories: number;
   }
 
   interface ImageModule {
@@ -159,6 +161,13 @@
     }
   }
 
+  function getStrokeDasharray(value: number, max: number): string {
+    const radius = 50;
+    const circumference = 2 * Math.PI * radius;
+    const progress = (value / max) * circumference;
+    return `${progress} ${circumference - progress}`;
+  }
+
   // Remove this
   // This is for debugging
   updateCartValues();
@@ -231,6 +240,7 @@
           </div>
         </div>
 
+        <!-- productcontainer -->
         <div id="productscontainer" class="grid grid-cols-3 gap-12 mx-8">
           {#each productsData.filter((productData) => productData.category.name === selectedCategory) as productData (productData.id)}
             {@const isInCart = cartItems.find(
@@ -431,37 +441,56 @@
 <!-- Popup -->
 {#if showPopup && selectedProduct}
   <div
-    class="fixed inset-0 flex items-center justify-center bg-opacity-80 z-50"
+    class="fixed inset-0 flex items-center justify-center bg-opacity-50 z-50"
   >
-    <div class="bg-white p-8 rounded-lg shadow-lg w-1/2">
-      <h2 class="text-2xl font-bold mb-4">{selectedProduct.name}</h2>
-      <p class="mb-4">{selectedProduct.description}</p>
-      <p class="mb-4">Price: ${selectedProduct.price}</p>
+    <div class="bg-white p-8 rounded-lg shadow-lg w-1/2 relative">
+      <h2 class="text-3xl font-bold mb-4 text-center">
+        {selectedProduct.name}
+      </h2>
       <img
         src={selectedProduct.image.filename}
         alt={selectedProduct.name}
         class="w-full h-48 object-cover rounded-lg mb-4"
       />
+      <p class="mb-4 text-lg text-gray-700">{selectedProduct.description}</p>
+      <p class="mb-4 text-lg font-semibold">Price: ${selectedProduct.price}</p>
+      <div class="flex flex-col items-center justify-center mb-4">
+        <svg width="120" height="120" class="relative">
+          <circle
+            cx="60"
+            cy="60"
+            r="50"
+            stroke="#e6e6e6"
+            stroke-width="10"
+            fill="none"
+          />
+          <circle
+            cx="60"
+            cy="60"
+            r="50"
+            stroke="#4CAF50"
+            stroke-width="10"
+            fill="none"
+            stroke-dasharray="0 314"
+            stroke-linecap="round"
+            transform="rotate(-90 60 60)"
+            class="progress-circle"
+            style="--progress-dasharray: {getStrokeDasharray(
+              selectedProduct.calories,
+              500
+            )};"
+          />
+        </svg>
+        <span class="absolute text-xl font-bold mt-2"
+          >{selectedProduct.calories} cal</span
+        >
+      </div>
       <button
         onclick={closePopup}
-        class="bg-green-400/80 text-white px-4 py-2 rounded-lg">Close</button
+        class="bg-[var(--primary)] text-white px-4 py-2 rounded-lg w-full mt-4"
       >
+        Close
+      </button>
     </div>
   </div>
 {/if}
-
-<style>
-  .blurred {
-    filter: blur(5px);
-  }
-
-  @keyframes effect {
-    from {
-      opacity: 0%;
-    }
-  }
-
-  .product-button {
-    animation: effect 0.2s ease-in-out;
-  }
-</style>
