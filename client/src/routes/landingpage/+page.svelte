@@ -240,7 +240,7 @@
           </div>
         </div>
 
-        <!-- productcontainer -->
+       <!-- productcontainer -->
         <div id="productscontainer" class="grid grid-cols-3 gap-12 mx-8">
           {#each productsData.filter((productData) => productData.category.name === selectedCategory) as productData (productData.id)}
             {@const isInCart = cartItems.find(
