@@ -241,7 +241,7 @@
                   alt={category}
                   class="w-20 h-20 mb-2 rounded-xl"
                 />
-                <span class="text-lg font-bold text-black">{category}</span>
+                <span class="text-2xl font-bold text-black">{category}</span>
               </button>
             </li>
           {/each}
@@ -265,7 +265,7 @@
                 class="absolute inset-0 flex items-center justify-center p-4"
                 style="width: 300px; margin: auto;"
               >
-                <p class="text-lg font-bold text-center">
+                <p class="text-xl font-bold text-center">
                   {productsData.find(
                     (product) => product.category.name === selectedCategory
                   )?.category.description}
@@ -304,7 +304,7 @@
                 <h3 class="text-xl font-bold pt-2">{productData.name}</h3>
               </div>
               <div class="flex flex-row">
-                <p class="pl-3 pb-3 text-green-600 font-semibold">
+                <p class="pl-3 pb-3 text-xl text-green-600 font-semibold">
                   ${productData.price}
                 </p>
                 <div class="ml-32">
@@ -404,7 +404,7 @@
   {/if}
 
   <!-- Bottom bar -->
-  <div class="h-23 bg-transparent flex items-center justify-between px-4">
+  <div class="h-42 bg-transparent flex items-center justify-between px-4">
     <div class="flex items-center space-x-4">
       <!-- Cancel Order -->
       <button
@@ -418,8 +418,8 @@
         }}
         class="flex items-center text-black/70 gap-2 rounded-4xl bg-[var(--secondary)] p-4 cursor-pointer"
       >
-        <img src={arrowLeft} class="opacity-70 h-5 mt-0.5" alt="" />
-        <span class="font-bold text-xl">
+        <img src={arrowLeft} class="opacity-70 h-8 mt-0.5" alt="" />
+        <span class="font-bold text-2xl">
           {#if currentDisplay == 1}
             Cancel order
           {:else}
@@ -432,8 +432,8 @@
       <button
         class="flex items-center text-black/70 gap-2 rounded-4xl bg-[var(--secondary)] p-4 cursor-pointer"
       >
-        <img src={globe} class="opacity-70 h-5 mt-0.5" alt="" />
-        <span class="font-bold text-xl">ENG</span>
+        <img src={globe} class="opacity-70 h-8 mt-0.5" alt="" />
+        <span class="font-bold text-2xl">ENG</span>
       </button>
 
       <!-- Babymode -->
@@ -443,7 +443,7 @@
         }}
         class="flex items-center text-black/70 gap-2 rounded-4xl bg-[var(--secondary)] p-4 cursor-pointer"
       >
-        <img src={personArmsUp} class="opacity-70 h-5 mt-0.5" alt="" />
+        <img src={personArmsUp} class="opacity-70 h-8 mt-0.5" alt="" />
       </button>
     </div>
 
@@ -456,17 +456,17 @@
           }}
           class="flex items-center text-black/70 gap-2 rounded-3xl bg-[var(--secondary)] p-4 cursor-pointe"
         >
-          <img src={basket} class="opacity-70 h-5 mt-0.5" alt="" />
-          <span class="font-bold text-xl">View cart</span>
+          <img src={basket} class="opacity-70 h-8 mt-0.5" alt="" />
+          <span class="font-bold text-2xl">View cart</span>
         </button>
 
         <!-- Preview text -->
         <div class="flex items-center text-black/70 font-bold text-xl gap-4">
           <div class="flex flex-row gap-2 items-center">
-            <img src={cart} class="opacity-70 h-5 mt-0.5" alt="" />
-            <span>{totalInCart} items</span>
+            <img src={cart} class="opacity-70 h-8 mt-0.5" alt="" />
+            <span class="text-2xl">{totalInCart} items</span>
           </div>
-          <span class="ml-2">€ {totalPrice}</span>
+          <span class="ml-2 text-2xl">€ {totalPrice}</span>
         </div>
       {/if}
     </div>
@@ -487,8 +487,8 @@
         alt={selectedProduct.name}
         class="w-full h-48 object-cover rounded-lg mb-4"
       />
-      <p class="mb-4 text-lg text-gray-700">{selectedProduct.description}</p>
-      <p class="mb-4 text-lg font-semibold">Price: ${selectedProduct.price}</p>
+      <p class="mb-4 text-xl text-gray-700">{selectedProduct.description}</p>
+      <p class="mb-4 text-xl font-semibold">Price: ${selectedProduct.price}</p>
       <div class="flex flex-col items-center justify-center mb-4">
         <svg width="120" height="120" class="relative">
           <circle

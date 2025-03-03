@@ -76,3 +76,16 @@
 .animate-slide-in {
   animation: slide-in 0.8s ease-out forwards;
 }
+
+@keyframes progress-animation {
+  from {
+    stroke-dasharray: 0 314;
+  }
+  to {
+    stroke-dasharray: var(--progress-dasharray);
+  }
+}
+
+.progress-circle {
+  animation: progress-animation 2s ease-out forwards;
+}
