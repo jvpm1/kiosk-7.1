@@ -49,7 +49,7 @@
   }
 
   // Core
-  const CACHE_INTERVAL = 60 * 10; // sec
+  const CACHE_INTERVAL = 60 * 10; // Seconds
   const CACHE_INDEX = "products";
 
   // Values
