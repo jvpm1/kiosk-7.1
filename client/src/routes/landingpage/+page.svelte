@@ -18,6 +18,7 @@
   import { goto } from "$app/navigation";
   import Icon from "@iconify/svelte";
   import { fade } from "svelte/transition";
+  import { json } from "@sveltejs/kit";
 
   // Interfaces
   interface Product {
@@ -41,6 +42,15 @@
   interface ImageModule {
     default: string;
   }
+
+  interface CachedProductsData {
+    lastTime: number;
+    products: Product[];
+  }
+
+  // Core
+  const CACHE_INTERVAL = 60 * 10; // Seconds
+  const CACHE_INDEX = "products";
 
   // Values
   let cartItems: Product[] = [];
@@ -117,7 +127,7 @@
     selectedProduct = null;
   }
 
-  onMount(async () => {
+  async function fetchProductsData(currentTime: number) {
     const response = await fetch(
       "https://u230061.gluwebsite.nl/kiosk/api/v1/products/",
       {
@@ -125,7 +135,32 @@
         mode: "cors",
       }
     );
+
     productsData = await response.json();
+
+    const _cache = {
+      lastTime: currentTime,
+      products: productsData,
+    };
+    localStorage.setItem(CACHE_INDEX, JSON.stringify(_cache));
+  }
+
+  onMount(async () => {
+    let cachedProductsData = localStorage.getItem(CACHE_INDEX);
+    const currentTime = new Date().getTime();
+
+    // Products data loading
+    if (cachedProductsData == null) {
+      await fetchProductsData(currentTime);
+    } else {
+      const _parsedJson: CachedProductsData = JSON.parse(cachedProductsData);
+
+      if (currentTime - _parsedJson.lastTime > CACHE_INTERVAL * 1000) {
+        await fetchProductsData(currentTime);
+      }
+
+      productsData = _parsedJson.products;
+    }
 
     // Map the images to the products
     productsData = productsData.map((product) => {
@@ -240,7 +275,7 @@
           </div>
         </div>
 
-       <!-- productcontainer -->
+        <!-- productcontainer -->
         <div id="productscontainer" class="grid grid-cols-3 gap-12 mx-8">
           {#each productsData.filter((productData) => productData.category.name === selectedCategory) as productData (productData.id)}
             {@const isInCart = cartItems.find(
