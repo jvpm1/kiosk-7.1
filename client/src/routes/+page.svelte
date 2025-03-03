@@ -30,14 +30,10 @@
     <div class="bg-white p-8 rounded shadow-lg space-y-10">
       <h2 class="text-5xl">Choose your option</h2>
       <form
-        class="text-white space-y-6 font-bold *:bg-green-600 *:p-3 *:rounded-3xl"
+        class="text-white flex gap-6 flex-col font-bold *:bg-green-600 *:p-7 *:rounded-3xl text-5xl"
       >
-        <div class="text-3xl">
-          <a href=" landingpage">Eat in</a>
-        </div>
-        <div class="text-3xl">
-          <a href="landingpage">Eat out</a>
-        </div>
+        <a href="landingpage?t=1"><span>Eat in</span></a>
+        <a href="landingpage?t=2"><span>Eat out</span></a>
       </form>
     </div>
   </div>
