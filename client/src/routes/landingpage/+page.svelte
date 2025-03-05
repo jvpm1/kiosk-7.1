@@ -519,8 +519,12 @@
 {#if showPopup && selectedProduct}
   <div
     class="fixed inset-0 flex items-center justify-center bg-opacity-50 z-50"
+    transition:fade
   >
-    <div class="bg-white p-8 rounded-lg shadow-lg w-1/2 relative">
+    <div
+      class="bg-white p-8 rounded-lg shadow-lg w-1/2 relative"
+      transition:scale={{ duration: 300, easing: cubicOut }}
+    >
       <h2 class="text-3xl font-bold mb-4 text-center">
         {selectedProduct.name}
       </h2>
