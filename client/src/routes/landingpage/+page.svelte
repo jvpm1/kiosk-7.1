@@ -47,6 +47,14 @@
     lastTime: number;
     products: Product[];
   }
+  interface ApiCartData {
+    total: number;
+    price: number;
+    products: {
+      id: number;
+      amount: number;
+    }[];
+  }
 
   // Core
   const CACHE_INTERVAL = 60 * 10; // Seconds
@@ -129,7 +137,7 @@
 
   async function fetchProductsData(currentTime: number) {
     const response = await fetch(
-      "https://u230061.gluwebsite.nl/kiosk/api/v1/products/",
+      "https://u230061.gluwebsite.nl/kiosk/api/v1/products/get/",
       {
         method: "GET",
         mode: "cors",
@@ -143,6 +151,39 @@
       products: productsData,
     };
     localStorage.setItem(CACHE_INDEX, JSON.stringify(_cache));
+  }
+
+  async function checkout() {
+    let data: ApiCartData = {
+      total: totalInCart,
+      price: totalPrice,
+      products: [],
+    };
+
+    cartItems.forEach((tbl) => {
+      const ID = tbl.id;
+
+      const alreadyExists = data.products.find((_tbl) => _tbl.id == ID);
+      if (alreadyExists) {
+        alreadyExists.amount++;
+        return;
+      }
+
+      data.products.push({
+        id: ID,
+        amount: 1,
+      });
+    });
+
+    const res = await fetch(
+      "https://u230061.gluwebsite.nl/kiosk/api/v1/orders/add/",
+      {
+        method: "POST",
+        body: JSON.stringify(data),
+      }
+    ).then((res) => res.json());
+
+    console.log(res);
   }
 
   onMount(async () => {
@@ -397,7 +438,7 @@
         <button
           id="purchaseButton"
           class="w-auto h-auto rounded-4xl bg-[var(--secondary)] p-4 text-5xl font-bold text-black/80"
-          >Checkout</button
+          onclick={() => checkout()}>Checkout</button
         >
       </div>
     </div>

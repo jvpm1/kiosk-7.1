@@ -13,8 +13,12 @@
   class="relative flex flex-col items-center gap-12 min-h-screen background-animation"
   style="background-size: cover; background-position: center;"
 >
-  <img alt="The project logo" class="w-96 mt-[50%] opacity-0 animate-fade-in" src={logo} />
-  
+  <img
+    alt="The project logo"
+    class="w-96 mt-[50%] opacity-0 animate-fade-in"
+    src={logo}
+  />
+
   <button
     class="text-animation bg-gradient-to-r from-[var(--green3)] via-[var(--green2)] to-[var(--primary)] bg-clip-text text-transparent text-5xl font-black"
     on:click={() => (showModal = true)}
@@ -39,4 +43,3 @@
     </div>
   </div>
 {/if}
-
