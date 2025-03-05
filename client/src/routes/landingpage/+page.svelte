@@ -186,7 +186,7 @@
     const selectedEl = categoryRefs[selectedCategoryIndex];
 
     if (selectedEl) {
-      indicatorHeight = selectedEl.offsetHeight;
+      indicatorHeight = selectedEl.offsetHeight+24;
       indicatorTop = selectedEl.offsetTop;
     }
   }
@@ -257,7 +257,7 @@
             <button
               bind:this={categoryRefs[index]}
               onclick={() => selectCategory(category, index)}
-              class="w-full text-center p-6 rounded-3xl flex flex-col items-center relative"
+              class="w-full text-center py-6 rounded-3xl flex flex-col items-center relative"
             >
               <img
                 src={getCategoryImage(category)}
@@ -274,7 +274,7 @@
 
       <div
         id="categoriecontainer"
-        class="flex flex-col h-full w-full overflow-y-scroll"
+        class="flex flex-col h-full w-full overflow-y-scroll overflow-x-hidden"
       >
         <div class="flex flex-row items-start">
           <img alt="The project dino" class="w-48 mt-24" src={dino} />
