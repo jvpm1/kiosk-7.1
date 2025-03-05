@@ -182,9 +182,15 @@
         method: "POST",
         body: JSON.stringify(data),
       }
-    ).then((res) => res.json());
-
-    console.log(res);
+    );
+    const json = res.json(); // { message: ErrorString<string> }
+    if (res.status == 200) {
+      // Good
+      console.log("Yipieee");
+    } else if (res.status == 404) {
+      // Bad
+      console.log("NOOOOOOOOOOOOOOOOO");
+    }
   }
 
   onMount(async () => {
@@ -227,19 +233,18 @@
     const selectedEl = categoryRefs[selectedCategoryIndex];
 
     if (selectedEl) {
-      indicatorHeight = selectedEl.offsetHeight+24;
+      indicatorHeight = selectedEl.offsetHeight + 24;
       indicatorTop = selectedEl.offsetTop;
     }
   }
 
   function selectCategory(category: string, index: number) {
-  selectedCategoryIndex = index;
-  selectedCategory = category;
-  updateIndicatorPosition();
-}
+    selectedCategoryIndex = index;
+    selectedCategory = category;
+    updateIndicatorPosition();
+  }
 
   $: updateIndicatorPosition();
-  
 
   function getCategoryImage(category: string): string {
     switch (category) {
@@ -283,35 +288,34 @@
     >
       <!-- Sidebar -->
       <div
-      id="sidebar"
-      class="bg-background rounded-br-4xl overflow-x-hidden overflow-y-scroll p-4 bg-[var(--secondary)] w-[256px] flex flex-col items-center relative"
-    >
-      <!-- Moving Background Indicator -->
-      <div
-        class="absolute w-[90%] bg-[var(--lightorange)] rounded-3xl transition-all duration-300 ease-in-out z-0"
-        style="top: {indicatorTop}px; height: {indicatorHeight}px; left: 50%; transform: translateX(-50%);"
-      ></div>
-    
-      <ul class="space-y-5 relative z-10">
-        {#each categories as category, index}
-          <li>
-            <button
-              bind:this={categoryRefs[index]}
-              onclick={() => selectCategory(category, index)}
-              class="w-full text-center py-6 rounded-3xl flex flex-col items-center relative"
-            >
-              <img
-                src={getCategoryImage(category)}
-                alt={category}
-                class="w-20 h-20 mb-2 rounded-xl"
-              />
-              <span class="text-2xl font-bold text-black">{category}</span>
-            </button>
-          </li>
-        {/each}
-      </ul>
-    </div>
-    
+        id="sidebar"
+        class="bg-background rounded-br-4xl overflow-x-hidden overflow-y-scroll p-4 bg-[var(--secondary)] w-[256px] flex flex-col items-center relative"
+      >
+        <!-- Moving Background Indicator -->
+        <div
+          class="absolute w-[90%] bg-[var(--lightorange)] rounded-3xl transition-all duration-300 ease-in-out z-0"
+          style="top: {indicatorTop}px; height: {indicatorHeight}px; left: 50%; transform: translateX(-50%);"
+        ></div>
+
+        <ul class="space-y-5 relative z-10">
+          {#each categories as category, index}
+            <li>
+              <button
+                bind:this={categoryRefs[index]}
+                onclick={() => selectCategory(category, index)}
+                class="w-full text-center py-6 rounded-3xl flex flex-col items-center relative"
+              >
+                <img
+                  src={getCategoryImage(category)}
+                  alt={category}
+                  class="w-20 h-20 mb-2 rounded-xl"
+                />
+                <span class="text-2xl font-bold text-black">{category}</span>
+              </button>
+            </li>
+          {/each}
+        </ul>
+      </div>
 
       <div
         id="categoriecontainer"
