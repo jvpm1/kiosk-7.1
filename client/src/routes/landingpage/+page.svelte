@@ -14,10 +14,11 @@
   import personArmsUp from "$lib/img/bootstrap/person-arms-up.svg";
 
   // Imports
-  import { onMount } from "svelte";
+  import { onMount, tick } from "svelte";
   import { goto } from "$app/navigation";
   import Icon from "@iconify/svelte";
-  import { fade } from "svelte/transition";
+  import { fade, scale, fly } from "svelte/transition";
+  import { cubicOut } from "svelte/easing";
   import { json } from "@sveltejs/kit";
 
   // Interfaces
@@ -175,9 +176,29 @@
     selectedCategory = categories[0]; // Set the initial selected category
   });
 
-  function selectCategory(category: string) {
-    selectedCategory = category;
+  let categoryRefs: (HTMLElement | null)[] = [];
+  let selectedCategoryIndex = 0;
+  let indicatorTop = 0;
+  let indicatorHeight = 0;
+
+  async function updateIndicatorPosition() {
+    await tick();
+    const selectedEl = categoryRefs[selectedCategoryIndex];
+
+    if (selectedEl) {
+      indicatorHeight = selectedEl.offsetHeight;
+      indicatorTop = selectedEl.offsetTop;
+    }
   }
+
+  function selectCategory(category: string, index: number) {
+  selectedCategoryIndex = index;
+  selectedCategory = category;
+  updateIndicatorPosition();
+}
+
+  $: updateIndicatorPosition();
+  
 
   function getCategoryImage(category: string): string {
     switch (category) {
@@ -223,30 +244,35 @@
     >
       <!-- Sidebar -->
       <div
-        id="sidebar"
-        class="bg-background rounded-br-4xl overflow-y-scroll p-4 bg-[var(--secondary)] w-[256px] flex flex-col items-center"
-      >
-        <ul class="space-y-5">
-          {#each categories as category}
-            <li>
-              <button
-                onclick={() => selectCategory(category)}
-                class="w-full text-center p-10 rounded-3xl flex flex-col items-center {selectedCategory ===
-                category
-                  ? 'bg-[var(--lightorange)]'
-                  : 'bg-transparent'}"
-              >
-                <img
-                  src={getCategoryImage(category)}
-                  alt={category}
-                  class="w-20 h-20 mb-2 rounded-xl"
-                />
-                <span class="text-2xl font-bold text-black">{category}</span>
-              </button>
-            </li>
-          {/each}
-        </ul>
-      </div>
+      id="sidebar"
+      class="bg-background rounded-br-4xl overflow-x-hidden overflow-y-scroll p-4 bg-[var(--secondary)] w-[256px] flex flex-col items-center relative"
+    >
+      <!-- Moving Background Indicator -->
+      <div
+        class="absolute w-[90%] bg-[var(--lightorange)] rounded-3xl transition-all duration-300 ease-in-out z-0"
+        style="top: {indicatorTop}px; height: {indicatorHeight}px; left: 50%; transform: translateX(-50%);"
+      ></div>
+    
+      <ul class="space-y-5 relative z-10">
+        {#each categories as category, index}
+          <li>
+            <button
+              bind:this={categoryRefs[index]}
+              onclick={() => selectCategory(category, index)}
+              class="w-full text-center p-6 rounded-3xl flex flex-col items-center relative"
+            >
+              <img
+                src={getCategoryImage(category)}
+                alt={category}
+                class="w-20 h-20 mb-2 rounded-xl"
+              />
+              <span class="text-2xl font-bold text-black">{category}</span>
+            </button>
+          </li>
+        {/each}
+      </ul>
+    </div>
+    
 
       <div
         id="categoriecontainer"
@@ -281,44 +307,60 @@
             {@const isInCart = cartItems.find(
               (_productData) => _productData.id == productData.id
             )}
-            <button
-              class="bg-white rounded shadow flex flex-col items-start product-button"
-              onclick={() => addCartItem(productData)}
+            <div
+              class="relative"
+              in:fly={{
+                x: 300,  // Slide in from right
+                duration: 600,
+                easing: cubicOut,
+              }}
             >
+              <button
+                class="bg-white rounded shadow flex flex-col items-start product-button {isInCart
+                  ? 'border-4 border-green-500'
+                  : ''}"
+                onclick={() => addCartItem(productData)}
+              >
+                <div class="h-58 w-56">
+                  <img
+                    alt={productData.name}
+                    class="w-56 h-38 object-cover rounded-t"
+                    src={productData.image.filename}
+                  />
+                  <h3 class="text-xl font-bold pt-2">{productData.name}</h3>
+                </div>
+                <div class="flex flex-row">
+                  <p class="pl-3 pb-3 text-xl text-green-600 font-semibold">
+                    ${productData.price}
+                  </p>
+                  <div class="ml-32">
+                    <!-- svelte-ignore a11y_click_events_have_key_events -->
+                    <!-- svelte-ignore a11y_no_static_element_interactions -->
+                    <div
+                      onclick={(event) => {
+                        event.stopPropagation();
+                        openPopup(productData);
+                      }}
+                      class="cursor-pointer"
+                    >
+                      <Icon icon="carbon:information" width="24" height="24" />
+                    </div>
+                  </div>
+                </div>
+              </button>
               {#if isInCart}
-                <div in:fade class="absolute z-10 p-1">
+                <div
+                  in:fade
+                  class="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 z-10 p-1"
+                >
                   <div
-                    class="rounded-full bg-white font-bold min-w-6 h-6 shadow-2xl flex items-center justify-center px-2"
+                    class="rounded-full bg-green-500 font-bold min-w-6 h-6 shadow-2xl text-white flex items-center justify-center px-2"
                   >
                     {getAmountInCart(productData)}
                   </div>
                 </div>
               {/if}
-
-              <div class="h-58 w-full">
-                <img
-                  alt={productData.name}
-                  class="w-full h-38 object-cover rounded-t"
-                  src={productData.image.filename}
-                />
-                <h3 class="text-xl font-bold pt-2">{productData.name}</h3>
-              </div>
-              <div class="flex flex-row">
-                <p class="pl-3 pb-3 text-xl text-green-600 font-semibold">
-                  ${productData.price}
-                </p>
-                <div class="ml-32">
-                  <!-- svelte-ignore a11y_click_events_have_key_events -->
-                  <!-- svelte-ignore a11y_no_static_element_interactions -->
-                  <div
-                    onclick={() => openPopup(productData)}
-                    class="cursor-pointer"
-                  >
-                    <Icon icon="carbon:information" width="24" height="24" />
-                  </div>
-                </div>
-              </div>
-            </button>
+            </div>
           {/each}
         </div>
       </div>

@@ -89,3 +89,12 @@
 .progress-circle {
   animation: progress-animation 2s ease-out forwards;
 }
+
+.blurred {
+  filter: blur(5px);
+  pointer-events: none;
+}
+
+.blurred * {
+  pointer-events: none;
+}
