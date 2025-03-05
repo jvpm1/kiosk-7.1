@@ -173,7 +173,7 @@
     categories = [
       ...new Set(productsData.map((product) => product.category.name)),
     ];
-    selectedCategory = categories[0]; // Set the initial selected category
+    selectedCategory = categories[0];
   });
 
   let categoryRefs: (HTMLElement | null)[] = [];
@@ -224,8 +224,6 @@
     return `${progress} ${circumference - progress}`;
   }
 
-  // Remove this
-  // This is for debugging
   updateCartValues();
 </script>
 
@@ -310,7 +308,7 @@
             <div
               class="relative"
               in:fly={{
-                x: 300,  // Slide in from right
+                x: 300,
                 duration: 600,
                 easing: cubicOut,
               }}
