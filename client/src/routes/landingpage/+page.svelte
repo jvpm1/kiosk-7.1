@@ -15,7 +15,7 @@
   import personArmsUp from "$lib/img/bootstrap/person-arms-up.svg";
 
   // Imports
-  import { onMount, tick } from "svelte";
+  import { onDestroy, onMount, tick } from "svelte";
   import { goto } from "$app/navigation";
   import Icon from "@iconify/svelte";
   import { fade, scale, fly } from "svelte/transition";
@@ -58,6 +58,9 @@
     }[];
   }
 
+  // Connections
+  let timer: any;
+
   // Core
   const CACHE_INTERVAL = 60 * 10; // Seconds
   const CACHE_INDEX = "products";
@@ -79,6 +82,8 @@
   let babyMode: boolean = false;
   let totalPrice: number = 0;
   let totalInCart: number = 0;
+  let lastActive: number = new Date().getTime();
+  let inActive: boolean = false;
 
   // Functions
   function getAmountInCart(productData: Product) {
@@ -212,12 +217,31 @@
       }, 5000);
     }
   }
+  function checkAFK() {
+    const current = new Date().getTime();
+
+    inActive = current - lastActive > 60000; // 60000 -> 1 min
+
+    // 90000 -> 1.5 min
+    if (current - lastActive > 90000) {
+      goto("/");
+      return;
+    }
+  }
+
+  function activityUpdate() {
+    lastActive = new Date().getTime();
+  }
 
   onMount(async () => {
+    // Afk checker
+    window.addEventListener("touchstart", activityUpdate);
+    timer = setInterval(checkAFK, 10000);
+
+    // Products data loading
     let cachedProductsData = localStorage.getItem(CACHE_INDEX);
     const currentTime = new Date().getTime();
 
-    // Products data loading
     if (cachedProductsData == null) {
       await fetchProductsData(currentTime);
     } else {
@@ -241,6 +265,12 @@
       ...new Set(productsData.map((product) => product.category.name)),
     ];
     selectedCategory = categories[0];
+  });
+
+  onDestroy(() => {
+    window.removeEventListener("touchstart", activityUpdate);
+
+    clearInterval(timer);
   });
 
   let categoryRefs: (HTMLElement | null)[] = [];
@@ -301,11 +331,24 @@
 <!-- Loading overlay -->
 {#if loadingScreen}
   <div
-    class="h-full w-full absolute bg-white/75 z-50 flex gap-20 flex-col justify-center items-center *:opacity-65"
+    class="h-full w-full absolute backdrop-blur-md bg-white/75 z-50 flex gap-20 flex-col justify-center items-center *:opacity-65"
   >
     <p class="text-6xl text-center font-bold">{loadingText}</p>
     <img src={loading} alt="" class="h-60 w-60 animate-spin" />
   </div>
+{/if}
+
+<!-- Activty check -->
+{#if inActive}
+  <button
+    onclick={() => {
+      lastActive = new Date().getTime();
+      inActive = false;
+    }}
+    class="h-full w-full absolute backdrop-blur-md bg-white/75 z-50 flex gap-20 flex-col justify-center items-center *:opacity-65"
+  >
+    <p class="text-6xl text-center font-bold">You still there?</p>
+  </button>
 {/if}
 
 <!-- Main display -->
