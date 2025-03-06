@@ -10,6 +10,7 @@
   import sides from "$lib/img/sides.jpg";
   import snacks from "$lib/img/snacks.jpg";
   import drink from "$lib/img/drink.jpg";
+  import loading from "$lib/img/loading.png";
   import speachbubble from "$lib/img/speachbubble.jpg";
   import personArmsUp from "$lib/img/bootstrap/person-arms-up.svg";
 
@@ -72,7 +73,9 @@
   const images = import.meta.glob("../../lib/img/menu/*.jpg", { eager: true });
 
   // Core values
-  let currentDisplay: number = 1; // 1 = items, 2 = cart
+  let currentDisplay: number = 1; // 1 = items, 2 = cart, 3 = Purchase complete
+  let loadingScreen: boolean = false;
+  let loadingText: string = "";
   let babyMode: boolean = false;
   let totalPrice: number = 0;
   let totalInCart: number = 0;
@@ -155,6 +158,14 @@
   }
 
   async function checkout() {
+    if (totalInCart == 0) return;
+    loadingText = "Please insert your cart";
+    loadingScreen = true;
+
+    // <-- Payment validation here
+
+    loadingText = "Processing";
+
     let data: ApiCartData = {
       total: totalInCart,
       price: totalPrice,
@@ -184,12 +195,21 @@
       }
     );
     const json = res.json(); // { message: ErrorString<string> }
+
     if (res.status == 200) {
       // Good
-      console.log("Yipieee");
+      currentDisplay = 3;
+      loadingScreen = false;
+
+      setTimeout(() => {
+        goto("/");
+      }, 60000);
     } else if (res.status == 404) {
       // Bad
-      console.log("NOOOOOOOOOOOOOOOOO");
+      loadingText = "Something went wrong, please try again";
+      setTimeout(() => {
+        loadingScreen = false;
+      }, 5000);
     }
   }
 
@@ -272,6 +292,21 @@
 
   updateCartValues();
 </script>
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+/>
+
+<!-- Loading overlay -->
+{#if loadingScreen}
+  <div
+    class="h-full w-full absolute bg-white/75 z-50 flex gap-20 flex-col justify-center items-center *:opacity-65"
+  >
+    <p class="text-6xl text-center font-bold">{loadingText}</p>
+    <img src={loading} alt="" class="h-60 w-60 animate-spin" />
+  </div>
+{/if}
 
 <!-- Main display -->
 <div
@@ -479,13 +514,41 @@
           </div>
         </div>
 
-        <button
-          id="purchaseButton"
-          class="w-auto h-auto rounded-4xl bg-[var(--secondary)] p-4 text-5xl font-bold text-black/80"
-          onclick={() => checkout()}>Checkout</button
-        >
+        {#if totalInCart != 0}
+          <button
+            id="purchaseButton"
+            class="w-auto h-auto rounded-4xl bg-[var(--secondary)] p-4 text-5xl font-bold text-black/80"
+            onclick={() => checkout()}>Checkout</button
+          >
+        {/if}
       </div>
     </div>
+  {/if}
+
+  <!-- Purchase complete -->
+  {#if currentDisplay == 3}
+    <section
+      class="absolute p-20 w-full h-full z-50 bg-white flex items-center flex-col font-bold text-black/75"
+    >
+      <img src={dino} class="h-50 mx-auto" alt="" />
+
+      <p class="my-20 text-7xl text-center">Have a nice day!</p>
+      <div class="w-full h-2 bg-black/20"></div>
+
+      <section
+        class="h-full w-full flex flex-col gap-20 justify-center items-center text-center"
+      >
+        <p class="text-8xl text-black/60">Your number is</p>
+        <p class="text-9xl">832</p>
+      </section>
+
+      <a
+        class="w-full h-auto py-8 rounded-4xl bg-[var(--secondary)] text-7xl font-bold text-black/75 text-center"
+        href="/"
+      >
+        Back
+      </a>
+    </section>
   {/if}
 
   <!-- Bottom bar -->
