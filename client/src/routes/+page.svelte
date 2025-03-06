@@ -1,45 +1,35 @@
 <script>
+  import { goto } from '$app/navigation';
   import "../app.css";
   import logo from "../lib/img/logo-picture-text.webp";
   import bgImage1 from "../lib/img/vegatbles.jpg";
   import bgImage2 from "../lib/img/woodbackground.jpg";
-  import { fade } from "svelte/transition";
-
-  let showModal = false;
+  import gif from "../lib/img/taphere.gif";
 </script>
 
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
   id="container"
   class="relative flex flex-col items-center gap-12 min-h-screen background-animation"
   style="background-size: cover; background-position: center;"
+  on:click={() => goto('landingpage')}
 >
   <img
     alt="The project logo"
-    class="w-96 mt-[50%] opacity-0 animate-fade-in"
+    class="w-112 mt-[40%] opacity-0 animate-fade-in"
     src={logo}
   />
 
-  <button
-    class="text-animation bg-gradient-to-r from-[var(--green3)] via-[var(--green2)] to-[var(--primary)] bg-clip-text text-transparent text-5xl font-black"
-    on:click={() => (showModal = true)}
+  <div
+    class="text-animation bg-gradient-to-r from-[var(--green3)] via-[var(--green2)] to-[var(--primary)] bg-clip-text text-transparent text-7xl font-black"
   >
     START YOUR ORDER
-  </button>
-</div>
-
-{#if showModal}
-  <div
-    class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 min-h-screen modal-background"
-    transition:fade
-  >
-    <div class="bg-white p-8 rounded shadow-lg space-y-10">
-      <h2 class="text-5xl">Choose your option</h2>
-      <form
-        class="text-white flex items-center gap-6 flex-col font-bold *:bg-green-600 *:p-7 *:rounded-3xl text-4xl"
-      >
-        <a href="landingpage?t=1"><span class="p-16">Eat in</span></a>
-        <a href="landingpage?t=2"><span class="p-12">Eat out</span></a>
-      </form>
-    </div>
   </div>
-{/if}
+
+  <img
+    alt="Tap here"
+    class="w-64 mt-4"
+    src={gif}
+  />
+</div>

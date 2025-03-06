@@ -12,6 +12,7 @@
   import drink from "$lib/img/drink.jpg";
   import speachbubble from "$lib/img/speachbubble.jpg";
   import personArmsUp from "$lib/img/bootstrap/person-arms-up.svg";
+  import textlogo from "$lib/img/logo-text.webp";
 
   // Imports
   import { onMount, tick } from "svelte";
@@ -197,7 +198,6 @@
     let cachedProductsData = localStorage.getItem(CACHE_INDEX);
     const currentTime = new Date().getTime();
 
-    // Products data loading
     if (cachedProductsData == null) {
       await fetchProductsData(currentTime);
     } else {
@@ -210,13 +210,11 @@
       productsData = _parsedJson.products;
     }
 
-    // Map the images to the products
     productsData = productsData.map((product) => {
       product.image.filename = getImagePath(product.image.filename);
       return product;
     });
 
-    // Extract unique categories
     categories = [
       ...new Set(productsData.map((product) => product.category.name)),
     ];
@@ -280,6 +278,10 @@
     ? 'blurred'
     : ''}"
 >
+<!-- logotop -->
+<div class="bg-[var(--secondary)]">
+  <img src="{textlogo}" alt="logotext" class="h-46 w-62 pb-6">
+</div>
   <!-- Items -->
   {#if currentDisplay == 1}
     <div
@@ -360,7 +362,7 @@
             >
               <button
                 class="bg-white rounded shadow flex flex-col items-start product-button {isInCart
-                  ? 'border-4 border-green-500'
+                  ? 'border-4 border-green-500 p-0.5'
                   : ''}"
                 onclick={() => addCartItem(productData)}
               >
@@ -386,7 +388,7 @@
                       }}
                       class="cursor-pointer"
                     >
-                      <Icon icon="carbon:information" width="24" height="24" />
+                      <Icon icon="carbon:information" width="28" height="28" />
                     </div>
                   </div>
                 </div>
@@ -514,12 +516,12 @@
       </button>
 
       <!-- Langauge -->
-      <button
+      <!-- <button
         class="flex items-center text-black/70 gap-2 rounded-4xl bg-[var(--secondary)] p-4 cursor-pointer"
       >
         <img src={globe} class="opacity-70 h-8 mt-0.5" alt="" />
         <span class="font-bold text-2xl">ENG</span>
-      </button>
+      </button> -->
 
       <!-- Babymode -->
       <button
