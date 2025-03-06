@@ -325,7 +325,7 @@
 <meta
   name="viewport"
   content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-/>
+/>  
 
 <!-- Loading overlay -->
 {#if loadingScreen}
@@ -447,7 +447,7 @@
             >
               <button
                 class="bg-white rounded shadow flex flex-col items-start product-button text-black/80
-                 {isInCart ? 'border-5  border-[var(--secondary)] p-0.5' : ''}"
+                 {isInCart ? 'border-3  border-[var(--secondary)] p-0.5' : ''}"
                 onclick={() => addCartItem(productData)}
               >
                 <div class="h-58 w-56">
@@ -470,7 +470,7 @@
                         event.stopPropagation();
                         openPopup(productData);
                       }}
-                      class="cursor-pointer"
+                      class="cursor-pointer p-0.5"
                     >
                       <Icon icon="carbon:information" width="28" height="28" />
                     </div>
@@ -480,10 +480,10 @@
               {#if isInCart}
                 <div
                   in:fade
-                  class="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 z-20 p-1"
+                  class="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 z-20 "
                 >
                   <div
-                    class="rounded-full bg-[var(--secondary)] font-bold min-w-6 h-6 shadow-2xl text-white flex items-center justify-center px-2"
+                    class="rounded-full ml-2.5 bg-[var(--secondary)] font-bold min-w-6 h-6 shadow-2xl text-white flex items-center justify-center"
                   >
                     {getAmountInCart(productData)}
                   </div>
