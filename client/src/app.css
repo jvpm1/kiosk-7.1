@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
 @font-face {
-  font-family: 'renos_roughregular';
-  src: url('renos-rough-webfont.woff2') format('woff2'),
-       url('renos-rough-webfont.woff') format('woff');
+  font-family: 'renos-roughregular';
+  src: url('/font/renos-rough-webfont.woff2') format('woff2'),
+       url('/font/renos-rough-webfont.woff') format('woff');
   font-weight: normal;
   font-style: normal;
 }
