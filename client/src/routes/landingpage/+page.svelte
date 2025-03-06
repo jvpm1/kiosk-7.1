@@ -357,10 +357,10 @@
     ? 'blurred'
     : ''}"
 >
-<!-- logotop -->
-<div class="bg-[var(--secondary)]">
-  <img src="{textlogo}" alt="logotext" class="h-46 w-62 pb-6">
-</div>
+  <!-- logotop -->
+  <div class="bg-[var(--secondary)]">
+    <img src={textlogo} alt="logotext" class="h-46 w-62 pb-6" />
+  </div>
   <!-- Items -->
   {#if currentDisplay == 1}
     <div
@@ -378,7 +378,7 @@
           style="top: {indicatorTop}px; height: {indicatorHeight}px; left: 50%; transform: translateX(-50%);"
         ></div>
 
-        <ul class="space-y-5 relative z-10">
+        <ul class="space-y-5 relative z-10 text-black/80">
           {#each categories as category, index}
             <li>
               <button
@@ -389,9 +389,9 @@
                 <img
                   src={getCategoryImage(category)}
                   alt={category}
-                  class="w-20 h-20 mb-2 rounded-xl"
+                  class="w-26 h-26 mb-2 rounded-xl"
                 />
-                <span class="text-2xl font-bold text-black">{category}</span>
+                <span class="text-3xl font-bold">{category}</span>
               </button>
             </li>
           {/each}
@@ -440,9 +440,8 @@
               }}
             >
               <button
-                class="bg-white rounded shadow flex flex-col items-start product-button {isInCart
-                  ? 'border-4 border-green-500 p-0.5'
-                  : ''}"
+                class="bg-white rounded shadow flex flex-col items-start product-button text-black/80
+                 {isInCart ? 'border-4 border-green-500 p-0.5' : ''}"
                 onclick={() => addCartItem(productData)}
               >
                 <div class="h-58 w-56">
