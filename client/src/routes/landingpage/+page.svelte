@@ -346,7 +346,9 @@
     }}
     class="h-full w-full absolute backdrop-blur-md bg-white/75 z-50 flex gap-20 flex-col justify-center items-center *:opacity-65"
   >
-    <p class="text-6xl text-center font-bold">You still there?</p>
+    <p class="text-6xl text-center font-bold animate-bounce">
+      You still there?
+    </p>
   </button>
 {/if}
 
