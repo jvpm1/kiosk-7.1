@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'renos_roughregular';
+  src: url('renos-rough-webfont.woff2') format('woff2'),
+       url('renos-rough-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
 :root {
   --text: #090c06;
   --background: #fcfdfa;
@@ -14,17 +22,17 @@
 
 @keyframes background-change {
   0%, 33% { 
-    background-image: url('./lib/img/vegatbles.jpg'); /* Stay here for 10s */
+    background-image: url('./lib/img/lightgray.jpg'); /* Stay here for 10s */
     background-size: cover;
     background-position: center;
   }
   40%, 60% { 
-    background-image: url('./lib/img/woodbackground.jpg'); /* Transition over 5s */
+    background-image: url('./lib/img/lightgray.jpg'); /* Transition over 5s */
     background-size: cover;
     background-position: center;
   }
   66%, 100% { 
-    background-image: url('./lib/img/woodbackground.jpg'); /* Stay here for 10s */
+    background-image: url('./lib/img/lightgray.jpg'); /* Stay here for 10s */
     background-size: cover;
     background-position: center;
   }
@@ -97,4 +105,13 @@
 
 .blurred * {
   pointer-events: none;
+}
+
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+*::-webkit-scrollbar { 
+  display: none; 
 }
