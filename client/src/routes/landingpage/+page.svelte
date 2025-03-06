@@ -359,48 +359,52 @@
 >
   <!-- logotop -->
   <div class="bg-[var(--secondary)]">
-    <img src={textlogo} alt="logotext" class="h-46 w-62 pb-6" />
+    <img src={textlogo} alt="logotext" class="h-46 w-62 pb-6 object-cover" />
   </div>
   <!-- Items -->
   {#if currentDisplay == 1}
     <div
       id="landingpagecontainer"
-      class="flex w-full {babyMode ? 'h-[700px]' : 'h-full'}"
+      class="flex w-full bg-[var(--secondary)] {babyMode
+        ? 'h-[700px]'
+        : 'h-full'}"
     >
       <!-- Sidebar -->
-      <div
-        id="sidebar"
-        class="bg-background rounded-br-4xl overflow-x-hidden overflow-y-scroll p-4 bg-[var(--secondary)] w-[256px] flex flex-col items-center relative"
-      >
-        <!-- Moving Background Indicator -->
+      <div class="relative h-full w-auto bg-white">
         <div
-          class="absolute w-[90%] bg-[var(--lightorange)] rounded-3xl transition-all duration-300 ease-in-out z-0"
-          style="top: {indicatorTop}px; height: {indicatorHeight}px; left: 50%; transform: translateX(-50%);"
-        ></div>
+          id="sidebar"
+          class="h-full bg-background rounded-br-4xl overflow-x-hidden overflow-y-scroll p-4 bg-[var(--secondary)] w-[256px] flex flex-col items-center relative"
+        >
+          <!-- Moving Background Indicator -->
+          <div
+            class="absolute w-[90%] bg-[var(--lightorange)] rounded-3xl transition-all duration-300 ease-in-out z-0"
+            style="top: {indicatorTop}px; height: {indicatorHeight}px; left: 50%; transform: translateX(-50%);"
+          ></div>
 
-        <ul class="space-y-5 relative z-10 text-black/80">
-          {#each categories as category, index}
-            <li>
-              <button
-                bind:this={categoryRefs[index]}
-                onclick={() => selectCategory(category, index)}
-                class="w-full text-center py-6 rounded-3xl flex flex-col items-center relative"
-              >
-                <img
-                  src={getCategoryImage(category)}
-                  alt={category}
-                  class="w-26 h-26 mb-2 rounded-xl"
-                />
-                <span class="text-3xl font-bold">{category}</span>
-              </button>
-            </li>
-          {/each}
-        </ul>
+          <ul class="space-y-5 relative z-10 text-black/80">
+            {#each categories as category, index}
+              <li>
+                <button
+                  bind:this={categoryRefs[index]}
+                  onclick={() => selectCategory(category, index)}
+                  class="w-full text-center py-6 rounded-3xl flex flex-col items-center relative"
+                >
+                  <img
+                    src={getCategoryImage(category)}
+                    alt={category}
+                    class="w-26 h-26 mb-2 rounded-xl"
+                  />
+                  <span class="text-3xl font-bold">{category}</span>
+                </button>
+              </li>
+            {/each}
+          </ul>
+        </div>
       </div>
 
       <div
         id="categoriecontainer"
-        class="flex flex-col h-full w-full overflow-y-scroll overflow-x-hidden"
+        class="flex flex-col h-full w-full overflow-y-scroll overflow-x-hidden rounded-tl-2xl bg-white"
       >
         <div class="flex flex-row items-start">
           <img alt="The project dino" class="w-48 mt-24" src={dino} />
@@ -441,7 +445,7 @@
             >
               <button
                 class="bg-white rounded shadow flex flex-col items-start product-button text-black/80
-                 {isInCart ? 'border-4 border-green-500 p-0.5' : ''}"
+                 {isInCart ? 'border-5  border-[var(--secondary)] p-0.5' : ''}"
                 onclick={() => addCartItem(productData)}
               >
                 <div class="h-58 w-56">
@@ -474,10 +478,10 @@
               {#if isInCart}
                 <div
                   in:fade
-                  class="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 z-10 p-1"
+                  class="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 z-20 p-1"
                 >
                   <div
-                    class="rounded-full bg-green-500 font-bold min-w-6 h-6 shadow-2xl text-white flex items-center justify-center px-2"
+                    class="rounded-full bg-[var(--secondary)] font-bold min-w-6 h-6 shadow-2xl text-white flex items-center justify-center px-2"
                   >
                     {getAmountInCart(productData)}
                   </div>
