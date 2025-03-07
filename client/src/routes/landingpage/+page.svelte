@@ -146,7 +146,7 @@
     selectedProduct = null;
   }
 
-//fetching API
+  //fetching API
   async function fetchProductsData(currentTime: number) {
     const response = await fetch(
       "https://u230061.gluwebsite.nl/kiosk/api/v1/products/get/",
@@ -228,18 +228,18 @@
     // 90000 -> 1.5 min
     if (current - lastActive > 90000) {
       goto("/");
-      return;
     }
   }
 
   function activityUpdate() {
+    console.log(new Date().getTime() - lastActive);
     lastActive = new Date().getTime();
   }
 
   onMount(async () => {
     // Afk checker
     window.addEventListener("touchstart", activityUpdate);
-    timer = setInterval(checkAFK, 10000);
+    timer = setInterval(checkAFK, 2500);
 
     // Products data loading
     let cachedProductsData = localStorage.getItem(CACHE_INDEX);
@@ -323,8 +323,6 @@
 
   updateCartValues();
 
-
-
   let showCancelModal = false;
 
   function confirmCancelOrder() {
@@ -340,19 +338,19 @@
     if (currentDisplay == 1) {
       showCancelModal = true;
     } else {
-      currentDisplay = 1
+      currentDisplay = 1;
     }
   }
 
-function closeCancelModal() {
-  showCancelModal = false;
-}
+  function closeCancelModal() {
+    showCancelModal = false;
+  }
 </script>
 
 <meta
   name="viewport"
   content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-/>  
+/>
 
 <!-- Loading overlay -->
 {#if loadingScreen}
@@ -375,7 +373,9 @@ function closeCancelModal() {
     class="h-full w-full absolute backdrop-blur-md bg-white/75 z-50 flex gap-20 flex-col justify-center items-center *:opacity-65"
     transition:fade
   >
-    <p class="text-6xl text-center font-bold animate-bounce ">You still there?</p>
+    <p class="text-6xl text-center font-bold animate-bounce">
+      You still there?
+    </p>
   </button>
 {/if}
 
@@ -507,7 +507,7 @@ function closeCancelModal() {
               {#if isInCart}
                 <div
                   in:fade
-                  class="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 z-20 "
+                  class="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 z-20"
                 >
                   <div
                     class="rounded-full ml-2.5 bg-[var(--secondary)] font-bold min-w-6 h-6 shadow-2xl text-white flex items-center justify-center"
@@ -630,7 +630,7 @@ function closeCancelModal() {
   {/if}
 
   <!-- Bottom bar -->
-    <div class="h-42 bg-transparent flex items-center justify-between px-4">
+  <div class="h-42 bg-transparent flex items-center justify-between px-4">
     <div class="flex items-center space-x-4">
       <!-- Cancel Order -->
       <button
