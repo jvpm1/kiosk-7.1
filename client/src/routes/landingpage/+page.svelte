@@ -75,6 +75,7 @@
   let selectedProduct: Product | null = null;
 
   const images = import.meta.glob("../../lib/img/menu/*.jpg", { eager: true });
+  let pickupNumber: any = "Loading...";
 
   // Core values
   let currentDisplay: number = 1; // 1 = items, 2 = cart, 3 = Purchase complete
@@ -195,19 +196,17 @@
       });
     });
 
-    const res = await fetch(
-      "https://u230061.gluwebsite.nl/kiosk/api/v1/orders/add/",
-      {
-        method: "POST",
-        body: JSON.stringify(data),
-      }
-    );
-    const json = res.json(); // { message: ErrorString<string> }
+    const res = await fetch("http://localhost/7.1_kiosk/api/v1/orders/add/", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+    const json = await res.json(); // { message: ErrorString<string>, callback: json<String> }
 
     if (res.status == 200) {
       // Good
       currentDisplay = 3;
       loadingScreen = false;
+      pickupNumber = JSON.parse(json?.callback)?.pickup_number;
 
       setTimeout(() => {
         goto("/");
@@ -617,7 +616,7 @@
         class="h-full w-full flex flex-col gap-20 justify-center items-center text-center"
       >
         <p class="text-8xl text-black/60">Your number is</p>
-        <p class="text-9xl">832</p>
+        <p class="text-9xl">{pickupNumber}</p>
       </section>
 
       <a
