@@ -755,8 +755,9 @@ function closeCancelModal() {
 
 {#if showCancelModal}
   <div
+    id="cancelorder"
     class="fixed inset-0 flex items-center justify-center bg-opacity-50 z-50"
-    transition:fade
+    transition:scale={{ duration: 300, easing: cubicOut }}
   >
     <div
       class="bg-white p-8 rounded-lg shadow-lg w-1/2 relative"

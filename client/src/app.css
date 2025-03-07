@@ -115,3 +115,7 @@
 *::-webkit-scrollbar { 
   display: none; 
 }
+
+#cancelorder {
+ backdrop-filter:blur(5px);
+}
