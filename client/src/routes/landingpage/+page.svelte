@@ -99,6 +99,7 @@
     return num;
   }
 
+  // cart shit
   function updateCartValues() {
     let num = 0;
     cartItems.forEach((productsData: Product) => {
@@ -145,6 +146,7 @@
     selectedProduct = null;
   }
 
+  //fetching API
   async function fetchProductsData(currentTime: number) {
     const response = await fetch(
       "https://u230061.gluwebsite.nl/kiosk/api/v1/products/get/",
@@ -320,17 +322,41 @@
   }
 
   updateCartValues();
+
+  let showCancelModal = false;
+
+  function confirmCancelOrder() {
+    if (currentDisplay == 2) {
+      currentDisplay = 1;
+    } else {
+      goto("/");
+    }
+    showCancelModal = false;
+  }
+
+  function handleCancelClick() {
+    if (currentDisplay == 1) {
+      showCancelModal = true;
+    } else {
+      currentDisplay = 1;
+    }
+  }
+
+  function closeCancelModal() {
+    showCancelModal = false;
+  }
 </script>
 
 <meta
   name="viewport"
   content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-/>  
+/>
 
 <!-- Loading overlay -->
 {#if loadingScreen}
   <div
     class="h-full w-full absolute backdrop-blur-md bg-white/75 z-50 flex gap-20 flex-col justify-center items-center *:opacity-65"
+    transition:fade
   >
     <p class="text-6xl text-center font-bold">{loadingText}</p>
     <img src={loading} alt="" class="h-60 w-60 animate-spin" />
@@ -345,7 +371,11 @@
       inActive = false;
     }}
     class="h-full w-full absolute backdrop-blur-md bg-white/75 z-50 flex gap-20 flex-col justify-center items-center *:opacity-65"
+    transition:fade
   >
+    <p class="text-6xl text-center font-bold animate-bounce">
+      You still there?
+    </p>
     <p class="text-6xl text-center font-bold animate-bounce">
       You still there?
     </p>
@@ -480,7 +510,7 @@
               {#if isInCart}
                 <div
                   in:fade
-                  class="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 z-20 "
+                  class="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 z-20"
                 >
                   <div
                     class="rounded-full ml-2.5 bg-[var(--secondary)] font-bold min-w-6 h-6 shadow-2xl text-white flex items-center justify-center"
@@ -558,7 +588,7 @@
               class="flex flex-row justify-between text-black/80 text-4xl font-bold"
             >
               <span>Total:</span>
-              <span>€ {totalPrice}</span>
+              <span>€ {totalPrice.toFixed(2)}</span>
             </div>
 
             <div class="w-full h-0.5 bg-black/20"></div>
@@ -607,14 +637,7 @@
     <div class="flex items-center space-x-4">
       <!-- Cancel Order -->
       <button
-        onclick={() => {
-          if (currentDisplay == 2) {
-            currentDisplay = 1;
-            return;
-          }
-
-          goto("/");
-        }}
+        onclick={handleCancelClick}
         class="flex items-center text-black/70 gap-2 rounded-4xl bg-[var(--secondary)] p-4 cursor-pointer"
       >
         <img src={arrowLeft} class="opacity-70 h-8 mt-0.5" alt="" />
@@ -665,7 +688,7 @@
             <img src={cart} class="opacity-70 h-8 mt-0.5" alt="" />
             <span class="text-2xl">{totalInCart} items</span>
           </div>
-          <span class="ml-2 text-2xl">€ {totalPrice}</span>
+          <span class="ml-2 text-2xl">€ {totalPrice.toFixed(2)}</span>
         </div>
       {/if}
     </div>
@@ -729,6 +752,37 @@
       >
         Close
       </button>
+    </div>
+  </div>
+{/if}
+
+{#if showCancelModal}
+  <div
+    id="cancelorder"
+    class="fixed inset-0 flex items-center justify-center bg-opacity-50 z-50"
+    transition:scale={{ duration: 300, easing: cubicOut }}
+  >
+    <div
+      class="bg-white p-8 rounded-lg shadow-lg w-1/2 relative"
+      transition:scale={{ duration: 300, easing: cubicOut }}
+    >
+      <h2 class="text-3xl font-bold mb-4 text-center">
+        Are you sure you want to cancel your order?
+      </h2>
+      <div class="flex justify-center gap-4 mt-4">
+        <button
+          onclick={confirmCancelOrder}
+          class="bg-[var(--secondary)] text-white px-4 py-2 rounded-lg"
+        >
+          Yes
+        </button>
+        <button
+          onclick={closeCancelModal}
+          class="bg-[var(--primary)] text-black px-4 py-2 rounded-lg"
+        >
+          No
+        </button>
+      </div>
     </div>
   </div>
 {/if}
