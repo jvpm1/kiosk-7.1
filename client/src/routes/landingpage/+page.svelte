@@ -75,7 +75,7 @@
   let selectedProduct: Product | null = null;
 
   const images = import.meta.glob("../../lib/img/menu/*.jpg", { eager: true });
-  let pickupNumber: any = "Loading...";
+  let pickupNumberElement;
 
   // Core values
   let currentDisplay: number = 1; // 1 = items, 2 = cart, 3 = Purchase complete
@@ -196,19 +196,17 @@
       });
     });
 
-    const res = await fetch("http://localhost/7.1_kiosk/api/v1/orders/add/", {
+    const res = await fetch("c", {
       method: "POST",
       body: JSON.stringify(data),
     });
-    const json = await res.json(); // { message: ErrorString<string>, callback: json<String> }
+    const json = res.json(); // { message: ErrorString<string>, callback:  }
 
     if (res.status == 200) {
       // Good
       currentDisplay = 3;
       loadingScreen = false;
-      pickupNumber = JSON.parse(json?.callback)?.pickup_number;
-
-      setTimeout(() => {
+      pickupNumberElement.innerHtml = setTimeout(() => {
         goto("/");
       }, 60000);
     } else if (res.status == 404) {
@@ -616,7 +614,7 @@
         class="h-full w-full flex flex-col gap-20 justify-center items-center text-center"
       >
         <p class="text-8xl text-black/60">Your number is</p>
-        <p class="text-9xl">{pickupNumber}</p>
+        <p bind:this={pickupNumberElement} class="text-9xl">832</p>
       </section>
 
       <a
