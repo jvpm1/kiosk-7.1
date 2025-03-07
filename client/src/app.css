@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'renos-roughregular';
+  src: url('/font/renos-rough-webfont.woff2') format('woff2'),
+       url('/font/renos-rough-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
 :root {
   --text: #090c06;
   --background: #fcfdfa;
@@ -7,10 +15,74 @@
   --secondary: #c7e594;
   --accent: #b4e366;
   --lightorange: #ffb181;
+  --green1: #a3d977;
+  --green2: #8bc34a;
+  --green3: #689f38;
 }
 
-.blurred {
-  filter: blur(5px);
+@keyframes background-change {
+  0%, 33% { 
+    background-image: url('./lib/img/lightgray.jpg'); /* Stay here for 10s */
+    background-size: cover;
+    background-position: center;
+  }
+  40%, 60% { 
+    background-image: url('./lib/img/lightgray.jpg'); /* Transition over 5s */
+    background-size: cover;
+    background-position: center;
+  }
+  66%, 100% { 
+    background-image: url('./lib/img/lightgray.jpg'); /* Stay here for 10s */
+    background-size: cover;
+    background-position: center;
+  }
+}
+
+.background-animation {
+  animation: background-change 30s ease-in-out infinite; 
+  background-size: cover;
+  background-position: center;
+}
+
+
+
+.modal-background {
+  background-image: url('./lib/img/vegatbles.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 1s ease-out forwards;
+}
+
+@keyframes text {
+  0%, 100% {
+    background-size: 200% 200%;
+    background-position: left center;
+  }
+  50% {
+    background-size: 200% 200%;
+    background-position: right center;
+  }
+}
+
+.text-animation {
+  animation: text 5s ease infinite;
+}
+
+@keyframes slide-in {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.8s ease-out forwards;
 }
 
 @keyframes progress-animation {
@@ -24,4 +96,26 @@
 
 .progress-circle {
   animation: progress-animation 2s ease-out forwards;
+}
+
+.blurred {
+  filter: blur(5px);
+  pointer-events: none;
+}
+
+.blurred * {
+  pointer-events: none;
+}
+
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+*::-webkit-scrollbar { 
+  display: none; 
+}
+
+#cancelorder {
+ backdrop-filter:blur(5px);
 }

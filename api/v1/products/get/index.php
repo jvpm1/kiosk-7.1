@@ -1,5 +1,7 @@
 <?php
-require_once '../dbc.php';
+require_once '../../dbc.php';
+
+header('Content-Type: application/json');
 
 // TODO: Remove upon release //
 header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
@@ -7,11 +9,8 @@ header('Access-Control-Allow-Credentials: true');
 header('Access-Control-Max-Age: 86400');
 // END //
 
-header('Content-Type: application/json');
-
-$output = [];
-
-$query = "
+$response = [];
+$query    = "
 SELECT
     p.product_id,
     p.name,
@@ -33,7 +32,6 @@ ORDER BY
     p.product_id
 ";
 
-// Main
 $prepare = $con->prepare($query);
 $prepare->bind_result(
     $product_id,
@@ -50,7 +48,7 @@ $prepare->bind_result(
 $prepare->execute();
 
 while ($prepare->fetch()) {
-    $output[] = [
+    $response[] = [
         'id'          => $product_id,
         'name'        => $name,
         'description' => $description,
@@ -69,6 +67,4 @@ while ($prepare->fetch()) {
 }
 
 $con->close();
-
-// Return json
-echo json_encode($output);
+echo json_encode($response);
