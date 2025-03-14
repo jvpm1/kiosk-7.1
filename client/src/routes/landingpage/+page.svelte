@@ -224,11 +224,11 @@
 
     inActive = current - lastActive > 60000; // 60000 -> 1 min
 
-    // 90000 -> 1.5 min
-    if (current - lastActive > 90000) {
+    // 75000 -> 1.25 min
+    if (current - lastActive > 70000) {
       goto("/");
     }
-  }
+}
 
   function activityUpdate() {
     console.log(new Date().getTime() - lastActive);
@@ -463,7 +463,7 @@
             {@const isInCart = cartItems.find(
               (_productData) => _productData.id == productData.id
             )}
-            <div
+            <div  
               class="relative"
               in:fly={{
                 x: 300,
