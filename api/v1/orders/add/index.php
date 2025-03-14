@@ -13,7 +13,8 @@ header('Access-Control-Max-Age: 86400');
 // END //
 
 $response = [
-    "message" => "No POST data was found",
+    "message"  => "No POST data was found",
+    "callback" => "[]",
 ];
 
 $data = json_decode(file_get_contents('php://input'), true);
@@ -21,7 +22,10 @@ $data = json_decode(file_get_contents('php://input'), true);
 if ($data) {
     $response["message"] = "OK";
 
-    $prod->order($data);
+    $pickupNumber         = $prod->order($data);
+    $response["callback"] = json_encode([
+        "pickup_number" => $pickupNumber,
+    ]);
 
     echo json_encode($response);
     exit;

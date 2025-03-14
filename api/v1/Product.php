@@ -8,10 +8,23 @@ class Product
 
         $price = $dataObject["price"];
 
-        $pickupQuery      = "SELECT COALESCE(MAX(pickup_number), 0) + 1 AS nextPickup FROM orders";
-        $result           = $con->query($pickupQuery);
-        $row              = $result->fetch_assoc();
-        $nextPickupNumber = $row['nextPickup'];
+        $usedNumbersQuery = "SELECT pickup_number FROM orders WHERE pickup_number BETWEEN 1 AND 99";
+        $result           = $con->query($usedNumbersQuery);
+
+        $usedNumbers = [];
+        if ($result && $result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $usedNumbers[] = $row['pickup_number'];
+            }
+        }
+
+        $nextPickupNumber = 1;
+        for ($i = 1; $i <= 99; $i++) {
+            if (! in_array($i, $usedNumbers)) {
+                $nextPickupNumber = $i;
+                break;
+            }
+        }
 
         $insertQuery = "INSERT INTO `orders` (order_status_id, pickup_number, price, datetime)
           VALUES (?, ?, ?, NOW())";
@@ -41,5 +54,7 @@ class Product
         }
 
         $con->close();
+
+        return $nextPickupNumber;
     }
 }
